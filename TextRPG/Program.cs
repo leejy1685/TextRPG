@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
+using static System.Formats.Asn1.AsnWriter;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace TextRPG
 {
     class Player
     {
-        int level { get; set; }
+        public int level { get; set; }
         string name;
         string job;
         public int damage { get; set; }
@@ -18,6 +20,10 @@ namespace TextRPG
         //장착여부를 판단하는 장비
         public Weapon eWeapon { get; set; }
         public Armor eArmor { get; set; }
+
+        //레벨업 관리를 위한 경험치
+        int exp;
+        
 
         public Player(string name, string job)
         {
@@ -31,6 +37,7 @@ namespace TextRPG
             inventory = new List<Item>();
             eWeapon = new Weapon();
             eArmor = new Armor();
+            exp = 1;
         }
 
         public void playerInfo()
@@ -117,6 +124,17 @@ namespace TextRPG
             {
                 equip((Armor)inventory[num - 1]);
             }
+        }
+
+        public bool levelUp(int dungeonClear)
+        {
+            if(exp == dungeonClear)
+            {
+                level++;
+                exp = 0;
+                return true;
+            }
+            return false;
         }
 
     }
@@ -268,7 +286,92 @@ namespace TextRPG
         }
     }
 
+    class Dungeon
+    {
+        public string name { get; set; }
+        public int recDefence { get; set; }
+        public int clearGold { get; set; }
+        public Random random { get; set; }
 
+        public Dungeon(string name, int recDefence, int clearGold)
+        {
+            this.name = name;
+            this.recDefence = recDefence;
+            this.clearGold = clearGold;
+            random = new Random();
+        }
+
+        public void tryDungeon(Player user, int dungeonClear)
+        {
+            if (user.defense < recDefence)
+            {
+                int rand = random.Next(1, 101);
+                if (rand <= 40) failDungeon(user);
+                else clearDungeon(user, dungeonClear);
+            }
+            else
+            {
+                clearDungeon(user, dungeonClear);
+            }
+        }
+
+        private void clearDungeon(Player user, int dungeonClear)
+        {
+            Console.Clear();
+
+            Console.WriteLine("던전 클리어");
+            Console.WriteLine("축하합니다!!");
+            Console.WriteLine("{0}을 클리어 하셨습니다.\n", name);
+
+
+            Console.WriteLine("[탐험 결과]");
+            if (user.levelUp(dungeonClear))
+            {
+                dungeonClear = 0;
+                Console.WriteLine("Level {0} -> {1}", user.level - 1, user.level);
+            }
+            //유저가 받는 데미지 계산
+            int def = user.defense - recDefence;
+            int dunDamage = random.Next(20 + def, 35 + def);
+            //0미만으로 못 내려가게 조정
+            int userHp = user.hp - dunDamage;
+            if (userHp < 0) userHp = 0;
+
+            Console.WriteLine("체력 {0} -> {1}", user.hp, userHp);
+
+            user.hp = userHp; //체력 반영
+
+            //보상 계산
+            int newGold = clearGold + (clearGold * random.Next(user.damage, user.damage * 2)) / 100;
+            Console.WriteLine("Gold {0} G -> {1} G", user.gold, user.gold + newGold);
+
+            user.gold += newGold;//보상 반영
+
+            Console.WriteLine("\n0. 나가기\n");
+            Console.WriteLine("원하시는 행동을 입력해 주세요");
+            Console.Write(">>");
+            Console.ReadLine();
+        }
+
+        private void failDungeon(Player user)
+        {
+            Console.Clear();
+
+            Console.WriteLine("던전 실패");
+            Console.WriteLine("{0}의 공략을 실패 하셨습니다.\n", name);
+
+            Console.WriteLine("[탐험 결과]");
+            Console.WriteLine("체력 {0} -> {1}",user.hp, user.hp/2);
+
+            user.hp /= 2;
+
+            Console.WriteLine("\n0. 나가기\n");
+            Console.WriteLine("원하시는 행동을 입력해 주세요");
+            Console.Write(">>");
+            Console.ReadLine();
+        }
+
+    }
     internal class Program
     {
         static void Main(string[] args)
@@ -370,11 +473,25 @@ namespace TextRPG
             //test code
             Store store = new Store();
             store.addItem(new Armor("수련자 갑옷", 5, "수련에 도움을 주는 갑옷입니다.",1000));
+            store.addItem(new Armor("그래도 좋은 갑옷", 7, "적당한 선능에 그럭저럭 쓸만한 갑옷입니다.", 1800));
             store.addItem(new Armor("무쇠갑옷", 9, "무쇠로 만들어져 튼튼한 갑옷입니다.",2200));
             store.addItem(new Armor("스파르타의 갑옷", 15, "스파르타의 전사들이 사용했다는 전설의 갑옷입니다.",3500));
             store.addItem(new Weapon("낡은 검", 2, "쉽게 볼 수 있는 낡은 검 입니다.", 600));
+            store.addItem(new Weapon("좋은 검", 4, "잘 다듬어져 있는 가성비 좋은 검 입니다.", 1000));
             store.addItem(new Weapon("청동 도끼", 5, "어디선가 사용됐던거 같은 도끼입니다.", 1500));
             store.addItem(new Weapon("스파르타의 창", 7, "스파르타의 전사들이 사용했다는 전설의 창입니다.", 3200));
+
+            Dungeon[] dunjeons = new Dungeon[3];
+          
+            Dungeon easy = new Dungeon("쉬운 던전", 5, 1000);
+            Dungeon normal = new Dungeon("일반 던전", 11, 1700); 
+            Dungeon hard = new Dungeon("어려운 던전", 17, 2500);
+            dunjeons[0] = easy;
+            dunjeons[1] = normal;
+            dunjeons[2] = hard;
+
+            int dungeonClear = 0;
+
 
 
             while (true)
@@ -383,7 +500,7 @@ namespace TextRPG
 
                 Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
                 Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
-                Console.WriteLine("1. 상태 보기\n2. 인벤토리\n3. 상점\n5. 휴식하기");
+                Console.WriteLine("1. 상태 보기\n2. 인벤토리\n3. 상점\n4. 던전입장\n5. 휴식하기");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">>");
 
@@ -392,9 +509,8 @@ namespace TextRPG
                 if (command == 1) playInfo(user);
                 else if (command == 2) openInventory(user);
                 else if (command == 3) openStore(store, user);
+                else if (command == 4) openDungeon(dunjeons, user, dungeonClear);
                 else if (command == 5) rest(user);
-
-
 
             }
         }
@@ -566,7 +682,32 @@ namespace TextRPG
             }
         }
 
+        static void openDungeon(Dungeon[] dungeons, Player user, int dungeonClear)
+        {
+            while (true)
+            {
+                Console.Clear();
 
+                Console.WriteLine("던전입장");
+                Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
+
+                for(int i = 0; i < dungeons.Length; i++)
+                {
+                    Console.WriteLine("{0}. {1}\t| 방어력 {2} 이상 권장", i + 1, dungeons[i].name, dungeons[i].recDefence);
+                }
+
+                Console.WriteLine("0. 나가기\n");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
+                Console.Write(">>");
+                int command = int.Parse(Console.ReadLine());
+
+                if (command == 0) break;
+                else if (0 < command && command <= dungeons.Length)
+                {
+                    dungeons[command-1].tryDungeon(user, dungeonClear);
+                } 
+            }
+        }
 
         static void rest(Player user)
         {
