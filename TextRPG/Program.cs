@@ -387,23 +387,17 @@ namespace TextRPG
     class GameManager
     {
         int dungeonClear = 0;
-
-    }
-
-
-    internal class Program
-    {
-        static int dungeonClear = 0;
-        static void Main(string[] args)
+        Player user;
+        Store store;
+        Dungeon[] dunjeons;
+        public void GameStart()
         {
             string name = nameCreate();
             string job = jobSelect();
-            Player user = new Player(name, job);
-
-            GamePlay(user);
+            user = new Player(name, job);
         }
 
-        static string nameCreate()
+        string nameCreate()
         {
             string name = "";
             while (true)
@@ -452,7 +446,7 @@ namespace TextRPG
 
             return name;
         }
-        static string jobSelect()
+        string jobSelect()
         {
             string job;
             while (true)
@@ -487,24 +481,23 @@ namespace TextRPG
             }
             return job;
         }
-
-        static void GamePlay(Player user)
+        public void GamePlay()
         {
             //test code
-            Store store = new Store();
-            store.addItem(new Armor("수련자 갑옷", 5, "수련에 도움을 주는 갑옷입니다.",1000));
+            store = new Store();
+            store.addItem(new Armor("수련자 갑옷", 5, "수련에 도움을 주는 갑옷입니다.", 1000));
             store.addItem(new Armor("그래도 좋은 갑옷", 7, "적당한 선능에 그럭저럭 쓸만한 갑옷입니다.", 1800));
-            store.addItem(new Armor("무쇠갑옷", 9, "무쇠로 만들어져 튼튼한 갑옷입니다.",2200));
-            store.addItem(new Armor("스파르타의 갑옷", 15, "스파르타의 전사들이 사용했다는 전설의 갑옷입니다.",3500));
+            store.addItem(new Armor("무쇠갑옷", 9, "무쇠로 만들어져 튼튼한 갑옷입니다.", 2200));
+            store.addItem(new Armor("스파르타의 갑옷", 15, "스파르타의 전사들이 사용했다는 전설의 갑옷입니다.", 3500));
             store.addItem(new Weapon("낡은 검", 2, "쉽게 볼 수 있는 낡은 검 입니다.", 600));
             store.addItem(new Weapon("좋은 검", 4, "잘 다듬어져 있는 가성비 좋은 검 입니다.", 1000));
             store.addItem(new Weapon("청동 도끼", 5, "어디선가 사용됐던거 같은 도끼입니다.", 1500));
             store.addItem(new Weapon("스파르타의 창", 7, "스파르타의 전사들이 사용했다는 전설의 창입니다.", 3200));
 
-            Dungeon[] dunjeons = new Dungeon[3];
-          
+            dunjeons = new Dungeon[3];
+
             Dungeon easy = new Dungeon("쉬운 던전", 5, 1000);
-            Dungeon normal = new Dungeon("일반 던전", 11, 1700); 
+            Dungeon normal = new Dungeon("일반 던전", 11, 1700);
             Dungeon hard = new Dungeon("어려운 던전", 17, 2500);
             dunjeons[0] = easy;
             dunjeons[1] = normal;
@@ -523,15 +516,15 @@ namespace TextRPG
 
                 int command = int.Parse(Console.ReadLine());
 
-                if (command == 1) playInfo(user);
-                else if (command == 2) openInventory(user);
-                else if (command == 3) openStore(store, user);
-                else if (command == 4) openDungeon(dunjeons, user);
-                else if (command == 5) rest(user);
+                if (command == 1) playInfo();
+                else if (command == 2) openInventory();
+                else if (command == 3) openStore(store);
+                else if (command == 4) openDungeon(dunjeons);
+                else if (command == 5) rest();
 
             }
         }
-        static void playInfo(Player user)
+        void playInfo()
         {
             while (true)
             {
@@ -552,7 +545,7 @@ namespace TextRPG
             }
         }
 
-        static void openInventory(Player user)
+        void openInventory()
         {
             while (true)
             {
@@ -569,12 +562,12 @@ namespace TextRPG
                 Console.Write(">>");
                 int command = int.Parse(Console.ReadLine());
 
-                if (command == 1) equipmentMng(user);
+                if (command == 1) equipmentMng();
                 if (command == 0) break;
             }
         }
 
-        static void equipmentMng(Player user)
+        void equipmentMng()
         {
             while (true)
             {
@@ -606,7 +599,7 @@ namespace TextRPG
 
         }
 
-        static void openStore(Store store,Player user)
+        void openStore(Store store)
         {
             while (true)
             {
@@ -627,13 +620,13 @@ namespace TextRPG
                 int command = int.Parse(Console.ReadLine());
 
                 if (command == 0) break;
-                else if (command == 1) buyStore(store, user);
-                else if (command == 2) sellStore(store, user);
+                else if (command == 1) buyStore(store);
+                else if (command == 2) sellStore(store);
 
             }
         }
 
-        static void buyStore(Store store, Player user)
+        void buyStore(Store store)
         {
             while (true)
             {
@@ -666,7 +659,7 @@ namespace TextRPG
             }
         }
 
-        static void sellStore(Store store, Player user)
+        void sellStore(Store store)
         {
             while (true)
             {
@@ -699,7 +692,7 @@ namespace TextRPG
             }
         }
 
-        static void openDungeon(Dungeon[] dungeons, Player user)
+        void openDungeon(Dungeon[] dungeons)
         {
             while (true)
             {
@@ -708,7 +701,7 @@ namespace TextRPG
                 Console.WriteLine("던전입장");
                 Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
 
-                for(int i = 0; i < dungeons.Length; i++)
+                for (int i = 0; i < dungeons.Length; i++)
                 {
                     Console.WriteLine("{0}. {1}\t| 방어력 {2} 이상 권장", i + 1, dungeons[i].name, dungeons[i].recDefence);
                 }
@@ -721,9 +714,9 @@ namespace TextRPG
                 if (command == 0) break;
                 else if (0 < command && command <= dungeons.Length && user.hp > 0)
                 {
-                    dungeonClear = dungeons[command-1].tryDungeon(user, dungeonClear);
+                    dungeonClear = dungeons[command - 1].tryDungeon(user, dungeonClear);
                 }
-                else if(0 < command && command <= dungeons.Length && user.hp == 0)
+                else if (0 < command && command <= dungeons.Length && user.hp == 0)
                 {
                     Console.WriteLine("체력이 부족합니다.");
                     Console.ReadLine();
@@ -731,14 +724,14 @@ namespace TextRPG
             }
         }
 
-        static void rest(Player user)
+        void rest()
         {
             while (true)
             {
                 Console.Clear();
 
                 Console.WriteLine("휴식하기");
-                Console.WriteLine("500 G 를 내면 체력을 회복 할 수 있습니다. (보유 골드 : {0} G)\n",user.gold);
+                Console.WriteLine("500 G 를 내면 체력을 회복 할 수 있습니다. (보유 골드 : {0} G)\n", user.gold);
 
                 Console.WriteLine("1. 휴식 하기\n0. 나가기\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
@@ -753,7 +746,7 @@ namespace TextRPG
                     Console.WriteLine("휴식을 완료했습니다.");
                     Console.ReadLine();
                 }
-                else if (command == 1 && user.gold < 500) 
+                else if (command == 1 && user.gold < 500)
                 {
                     Console.WriteLine("Gold 가 부족합니다.");
                     Console.ReadLine();
@@ -761,6 +754,23 @@ namespace TextRPG
 
             }
         }
+    }
+
+
+
+
+    internal class Program
+    {
+  
+        static void Main(string[] args)
+        {
+            GameManager gameManager = new GameManager();
+
+            gameManager.GameStart();
+            gameManager.GamePlay();
+        }
+
+       
     }
 
 }
