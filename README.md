@@ -14,6 +14,7 @@
 - 골드는 테스트를 위해 4000골로 설정, 1500골로 다시 내릴 예정
 
 - 아이템 장착 기능
+  
 ![image](https://github.com/user-attachments/assets/94a15485-f811-4444-a146-96a6223131d9)
 
 
@@ -23,6 +24,7 @@
 ![image](https://github.com/user-attachments/assets/d42072e3-3d00-4a54-ba46-3bbb75a285e8)
 
 - 장착 기능
+  
 ![image](https://github.com/user-attachments/assets/7829542f-edd7-43a8-8012-923ff9f757bc)
 
 
