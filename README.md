@@ -43,13 +43,20 @@
 ![image](https://github.com/user-attachments/assets/4cd518d0-f4ad-449c-b38d-cfc4044b8b61)
 ![image](https://github.com/user-attachments/assets/e69c8b46-4d73-46ad-951d-8221c260a2e9)
 
+## 던전 기능
+
+![image](https://github.com/user-attachments/assets/51736c83-467d-4d83-884a-7a5f814640d6)
+
+- 던전 클리어
+
+![image](https://github.com/user-attachments/assets/89e9b2d5-79e1-4f07-ac5e-df6070b5827a)
+
+- 던전 실패
+
+![image](https://github.com/user-attachments/assets/68d8ad20-1591-49c2-9641-c62eda36ab82)
+
 
 ## 휴식 기능
 
-![image](https://github.com/user-attachments/assets/d27420c1-1769-43b9-b897-83997b16da45)
-
-
-
-
-## 
+![image](https://github.com/user-attachments/assets/ecb77f3e-7f2b-4686-a667-3cbfab5eaa97)
 
