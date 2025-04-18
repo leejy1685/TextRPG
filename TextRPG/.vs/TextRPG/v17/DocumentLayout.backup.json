@@ -1,10 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\\uC774\uC900\uC601\\source\\repos\\TextRPG\\",
+  "WorkspaceRootPath": "C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|c:\\users\\\uC774\uC900\uC601\\source\\repos\\textrpg\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -20,11 +20,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\\uC774\uC900\uC601\\source\\repos\\TextRPG\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\\uC774\uC900\uC601\\source\\repos\\TextRPG\\Program.cs",
+              "ToolTip": "C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-16T11:42:19.953Z",
               "EditorCaption": ""

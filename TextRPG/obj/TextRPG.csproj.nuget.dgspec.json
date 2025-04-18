@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\이준영\\source\\repos\\TextRPG\\TextRPG.csproj": {}
+    "C:\\Users\\이준영\\Documents\\GitHub\\TextRPG\\TextRPG\\TextRPG.csproj": {}
   },
   "projects": {
-    "C:\\Users\\이준영\\source\\repos\\TextRPG\\TextRPG.csproj": {
+    "C:\\Users\\이준영\\Documents\\GitHub\\TextRPG\\TextRPG\\TextRPG.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\이준영\\source\\repos\\TextRPG\\TextRPG.csproj",
+        "projectUniqueName": "C:\\Users\\이준영\\Documents\\GitHub\\TextRPG\\TextRPG\\TextRPG.csproj",
         "projectName": "TextRPG",
-        "projectPath": "C:\\Users\\이준영\\source\\repos\\TextRPG\\TextRPG.csproj",
+        "projectPath": "C:\\Users\\이준영\\Documents\\GitHub\\TextRPG\\TextRPG\\TextRPG.csproj",
         "packagesPath": "C:\\Users\\이준영\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\이준영\\source\\repos\\TextRPG\\obj\\",
+        "outputPath": "C:\\Users\\이준영\\Documents\\GitHub\\TextRPG\\TextRPG\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
