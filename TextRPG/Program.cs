@@ -22,7 +22,7 @@ namespace TextRPG
         public Armor eArmor { get; set; }
 
         //레벨업 관리를 위한 경험치
-        int exp;
+        public int exp;
         
 
         public Player(string name, string job)
@@ -33,7 +33,7 @@ namespace TextRPG
             damage = 10;
             defense = 5;
             hp = 100;
-            gold = 4000;
+            gold = 1500;
             inventory = new List<Item>();
             eWeapon = new Weapon();
             eArmor = new Armor();
@@ -131,7 +131,7 @@ namespace TextRPG
             if(exp == dungeonClear)
             {
                 level++;
-                exp = 0;
+                exp++;
                 return true;
             }
             return false;
@@ -301,21 +301,28 @@ namespace TextRPG
             random = new Random();
         }
 
-        public void tryDungeon(Player user, int dungeonClear)
+        public int tryDungeon(Player user, int dungeonClear)
         {
             if (user.defense < recDefence)
             {
                 int rand = random.Next(1, 101);
-                if (rand <= 40) failDungeon(user);
-                else clearDungeon(user, dungeonClear);
+                if (rand <= 40)
+                {
+                    failDungeon(user);
+                    return dungeonClear;
+                }
+                else
+                {
+                    return clearDungeon(user, dungeonClear);
+                }
             }
             else
             {
-                clearDungeon(user, dungeonClear);
+                return clearDungeon(user, dungeonClear);
             }
         }
 
-        private void clearDungeon(Player user, int dungeonClear)
+        private int clearDungeon(Player user, int dungeonClear)
         {
             Console.Clear();
 
@@ -325,6 +332,8 @@ namespace TextRPG
 
 
             Console.WriteLine("[탐험 결과]");
+            dungeonClear++; //level up 계산
+            Console.WriteLine("{0}, {1}",user.exp,dungeonClear);
             if (user.levelUp(dungeonClear))
             {
                 dungeonClear = 0;
@@ -351,6 +360,8 @@ namespace TextRPG
             Console.WriteLine("원하시는 행동을 입력해 주세요");
             Console.Write(">>");
             Console.ReadLine();
+
+            return dungeonClear;
         }
 
         private void failDungeon(Player user)
@@ -372,8 +383,17 @@ namespace TextRPG
         }
 
     }
+
+    class GameManager
+    {
+        int dungeonClear = 0;
+
+    }
+
+
     internal class Program
     {
+        static int dungeonClear = 0;
         static void Main(string[] args)
         {
             string name = nameCreate();
@@ -490,9 +510,6 @@ namespace TextRPG
             dunjeons[1] = normal;
             dunjeons[2] = hard;
 
-            int dungeonClear = 0;
-
-
 
             while (true)
             {
@@ -509,7 +526,7 @@ namespace TextRPG
                 if (command == 1) playInfo(user);
                 else if (command == 2) openInventory(user);
                 else if (command == 3) openStore(store, user);
-                else if (command == 4) openDungeon(dunjeons, user, dungeonClear);
+                else if (command == 4) openDungeon(dunjeons, user);
                 else if (command == 5) rest(user);
 
             }
@@ -682,7 +699,7 @@ namespace TextRPG
             }
         }
 
-        static void openDungeon(Dungeon[] dungeons, Player user, int dungeonClear)
+        static void openDungeon(Dungeon[] dungeons, Player user)
         {
             while (true)
             {
@@ -702,10 +719,15 @@ namespace TextRPG
                 int command = int.Parse(Console.ReadLine());
 
                 if (command == 0) break;
-                else if (0 < command && command <= dungeons.Length)
+                else if (0 < command && command <= dungeons.Length && user.hp > 0)
                 {
-                    dungeons[command-1].tryDungeon(user, dungeonClear);
-                } 
+                    dungeonClear = dungeons[command-1].tryDungeon(user, dungeonClear);
+                }
+                else if(0 < command && command <= dungeons.Length && user.hp == 0)
+                {
+                    Console.WriteLine("체력이 부족합니다.");
+                    Console.ReadLine();
+                }
             }
         }
 
