@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.IO;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using static System.Formats.Asn1.AsnWriter;
@@ -9,8 +11,8 @@ namespace TextRPG
     class Player
     {
         public int level { get; set; }
-        string name;
-        string job;
+        public string name;
+        public string job;
         public int damage { get; set; }
         public int defense { get; set; }
         public int hp { get; set; }
@@ -60,8 +62,8 @@ namespace TextRPG
                 for (int i = 0; i < inventory.Count; i++)
                 {
                     string eqi = "";
-                    if (inventory[i] == eWeapon) eqi = "[E]";
-                    if (inventory[i] == eArmor) eqi = "[E]";
+                    if (inventory[i].name == eWeapon.name) eqi = "[E]";
+                    if (inventory[i].name == eArmor.name) eqi = "[E]";
 
                     Console.Write("- {0} {1}", i + 1, eqi);
                     inventory[i].itemInfo();
@@ -72,8 +74,8 @@ namespace TextRPG
                 foreach (Item item in inventory)
                 {
                     string eqi = "";
-                    if (item == eWeapon) eqi = "[E]";
-                    if (item == eArmor) eqi = "[E]";
+                    if (item.name == eWeapon.name) eqi = "[E]";
+                    if (item.name == eArmor.name) eqi = "[E]";
 
                     Console.Write("- {0}",eqi);
                     item.itemInfo();
@@ -397,22 +399,19 @@ namespace TextRPG
 
     class GameManager
     {
+        string path = AppDomain.CurrentDomain.BaseDirectory;    
         int dungeonClear;
         Player user;
         Store store;
         Dungeon[] dungeons;
 
-        public GameManager()
+        void createDate()
         {
             dungeonClear = 0;
             user = new Player(nameCreate(), jobSelect());
             store = new Store();
             dungeons = new Dungeon[3];
-            createDate();
-        }
 
-        void createDate()
-        {
             store.addItem(new Armor("수련자 갑옷", 5, "수련에 도움을 주는 갑옷입니다.", 1000));
             store.addItem(new Armor("그래도 좋은 갑옷", 7, "적당한 선능에 그럭저럭 쓸만한 갑옷입니다.", 1800));
             store.addItem(new Armor("무쇠갑옷", 9, "무쇠로 만들어져 튼튼한 갑옷입니다.", 2200));
@@ -513,7 +512,7 @@ namespace TextRPG
 
                 Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
                 Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
-                Console.WriteLine("1. 상태 보기\n2. 인벤토리\n3. 상점\n4. 던전입장\n5. 휴식하기");
+                Console.WriteLine("1. 상태 보기\n2. 인벤토리\n3. 상점\n4. 던전입장\n5. 휴식하기\n0.저장 후 종료\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">>");
 
@@ -524,6 +523,10 @@ namespace TextRPG
                 else if (command == 3) openStore();
                 else if (command == 4) openDungeon();
                 else if (command == 5) rest();
+                else if (command == 0){
+                    saveData();
+                    break;
+                }
 
             }
         }
@@ -768,6 +771,136 @@ namespace TextRPG
             }
             return -1;
         }
+
+        void saveData()
+        {
+            string dungeonClearData = JsonConvert.SerializeObject(dungeonClear);
+            File.WriteAllText(path + "\\DungeonClearData.json", dungeonClearData);
+
+            string userData = JsonConvert.SerializeObject(user);
+            File.WriteAllText(path + "\\UserData.json", userData);
+
+            List<Armor> armors = new List<Armor>();
+            List<Weapon> weapons = new List<Weapon>();
+            foreach(Item item in user.inventory)
+            {
+                if(item.GetType() == typeof(Armor))
+                {
+                    armors.Add((Armor)item);
+                }
+                else
+                {
+                    weapons.Add((Weapon)item);
+                }
+            }
+
+            string armorsData = JsonConvert.SerializeObject(armors);
+            File.WriteAllText(path + "\\userArmorsData.json", armorsData);
+
+            string weaponsData = JsonConvert.SerializeObject(weapons);
+            File.WriteAllText(path + "\\userweaponsData.json", weaponsData);
+
+            string storeData = JsonConvert.SerializeObject(store);
+            File.WriteAllText(path + "\\storeData.json", storeData);
+
+            armors = new List<Armor>();
+            weapons = new List<Weapon>();
+            foreach (Item item in store.items)
+            {
+                if (item.GetType() == typeof(Armor))
+                {
+                    armors.Add((Armor)item);
+                }
+                else
+                {
+                    weapons.Add((Weapon)item);
+                }
+            }
+
+            armorsData = JsonConvert.SerializeObject(armors);
+            File.WriteAllText(path + "\\storeArmorsData.json", armorsData);
+
+            weaponsData = JsonConvert.SerializeObject(weapons);
+            File.WriteAllText(path + "\\storeWeaponsData.json", weaponsData);
+
+            string dungeonData = JsonConvert.SerializeObject(dungeons);
+            File.WriteAllText(path + "\\dungeonData.json", dungeonData);
+        }
+
+        public void loadData()
+        {
+            if (!File.Exists(path + "\\UserData.json"))
+            {
+                createDate();
+                return;
+            }
+
+            string dungeonClearData = File.ReadAllText(path + "\\dungeonClearData.json");
+            int dungeonClearLoadData = JsonConvert.DeserializeObject<int>(dungeonClearData);
+            dungeonClear = dungeonClearLoadData;
+
+            string userLData = File.ReadAllText(path + "\\UserData.json");
+            Player userLoadData = JsonConvert.DeserializeObject<Player>(userLData);
+            user = userLoadData;
+            user.inventory = new List<Item>();
+
+            string userArmorsData = File.ReadAllText(path + "\\userArmorsData.json");
+            List<Armor> armorsLoadData = JsonConvert.DeserializeObject<List<Armor>>(userArmorsData);
+            foreach (Armor armor in armorsLoadData)
+            {
+                user.inventory.Add(armor);
+            }
+
+            string userWeaponsData = File.ReadAllText(path + "\\userWeaponsData.json");
+            List<Weapon> WeaponsLoadData = JsonConvert.DeserializeObject<List<Weapon>>(userWeaponsData);
+            foreach (Weapon weapon in WeaponsLoadData)
+            {
+                user.inventory.Add(weapon);
+            }
+
+            string storeData = File.ReadAllText(path + "\\storeData.json");
+            Store storeLoadData = JsonConvert.DeserializeObject<Store>(storeData);
+            store = storeLoadData;
+            store.items = new List<Item>();
+
+
+            string storeArmorsData = File.ReadAllText(path + "\\storeArmorsData.json");
+            armorsLoadData = JsonConvert.DeserializeObject<List<Armor>>(storeArmorsData);
+            foreach (Armor armor in armorsLoadData)
+            {
+                store.items.Add(armor);
+            }
+
+            string storeWeaponsData = File.ReadAllText(path + "\\storeWeaponsData.json");
+            WeaponsLoadData = JsonConvert.DeserializeObject<List<Weapon>>(storeWeaponsData);
+            foreach (Weapon weapon in WeaponsLoadData)
+            {
+                store.items.Add(weapon);
+            }
+
+
+
+
+            string dungeonData = File.ReadAllText(path + "\\dungeonData.json");
+            Dungeon[] dungeonLoadData = JsonConvert.DeserializeObject<Dungeon[]>(dungeonData);
+            if (dungeons == null)
+            {
+                dungeons = new Dungeon[3];
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                dungeons[i] = dungeonLoadData[i];
+            }
+
+
+
+        }
+
+
+
+
+
+
     }
 
 
@@ -780,7 +913,7 @@ namespace TextRPG
         {
 
             GameManager gameManager = new GameManager();
-
+            gameManager.loadData();
             gameManager.GamePlay();
 
         }

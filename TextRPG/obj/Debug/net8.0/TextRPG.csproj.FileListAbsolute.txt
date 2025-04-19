@@ -27,3 +27,6 @@ C:\Users\이준영\Documents\GitHub\TextRPG\TextRPG\bin\Debug\net8.0\TextRPG.dll
 C:\Users\이준영\Documents\GitHub\TextRPG\TextRPG\bin\Debug\net8.0\TextRPG.pdb
 C:\Users\이준영\Documents\GitHub\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.genruntimeconfig.cache
 C:\Users\이준영\Documents\GitHub\TextRPG\TextRPG\obj\Debug\net8.0\ref\TextRPG.dll
+C:\Users\이준영\Documents\GitHub\TextRPG\TextRPG\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\이준영\Documents\GitHub\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.csproj.AssemblyReference.cache
+C:\Users\이준영\Documents\GitHub\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.csproj.Up2Date

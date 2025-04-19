@@ -1,0 +1,1 @@
+{"name":"스파르타","job":"전사","exp":1,"level":1,"damage":10,"defense":10,"hp":100,"gold":500,"inventory":[{"defense":5,"name":"수련자 갑옷","showing":"수련에 도움을 주는 갑옷입니다.","price":1000}],"eWeapon":{"damage":0,"name":null,"showing":null,"price":0},"eArmor":{"defense":5,"name":"수련자 갑옷","showing":"수련에 도움을 주는 갑옷입니다.","price":1000}}
