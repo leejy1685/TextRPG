@@ -45,6 +45,8 @@ namespace TextRPG
             //레벨업을 판단하는 경험치
             exp = 1;
             dungeonClear = 0;
+
+            //Test
         }
 
         public void playerInfo()
