@@ -51,7 +51,7 @@ namespace TextRPG
         {
             //플레이어 정보 표시하는 함수
             Console.WriteLine("Lv. " + level.ToString("D2"));
-            Console.WriteLine("Chad( {0} )", job);
+            Console.WriteLine("{0}( {1} )",name, job);
 
             //장착된 장비가 있으면 다르게 표시
             if (eWeapon.damage > 0) Console.WriteLine("공격력 : {0} (+{1})", damage, eWeapon.damage);

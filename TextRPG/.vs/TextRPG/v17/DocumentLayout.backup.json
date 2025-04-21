@@ -108,7 +108,7 @@
               "RelativeDocumentMoniker": "Weapon.cs",
               "ToolTip": "C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\Weapon.cs",
               "RelativeToolTip": "Weapon.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAiwBMAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAiwBIAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-21T01:40:10.759Z",
               "EditorCaption": ""
@@ -119,8 +119,8 @@
               "Title": "Item.cs",
               "DocumentMoniker": "C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\Item.cs",
               "RelativeDocumentMoniker": "Item.cs",
-              "ToolTip": "C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\Item.cs*",
-              "RelativeToolTip": "Item.cs*",
+              "ToolTip": "C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\Item.cs",
+              "RelativeToolTip": "Item.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAADwvxEAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-21T01:39:42.126Z",
@@ -149,7 +149,8 @@
               "RelativeToolTip": "bin\\Debug\\net8.0\\UserData.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAA+AQAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-04-19T16:08:14.455Z"
+              "WhenOpened": "2025-04-19T16:08:14.455Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
