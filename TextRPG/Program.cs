@@ -25,7 +25,8 @@ namespace TextRPG
 
         //레벨업 관리를 위한 경험치
         public int exp;
-        
+        public int dungeonClear { get; set; }
+
 
         public Player(string name, string job)
         {
@@ -40,6 +41,7 @@ namespace TextRPG
             eWeapon = new Weapon();
             eArmor = new Armor();
             exp = 1;
+            dungeonClear = 0;
         }
 
         public void playerInfo()
@@ -138,7 +140,7 @@ namespace TextRPG
             }
         }
 
-        public bool levelUp(int dungeonClear)
+        public bool levelUp()
         {
             if(exp == dungeonClear)
             {
@@ -315,7 +317,7 @@ namespace TextRPG
             random = new Random();
         }
 
-        public int tryDungeon(Player user, int dungeonClear)
+        public void tryDungeon(Player user)
         {
             if (user.defense < recDefence)
             {
@@ -323,20 +325,19 @@ namespace TextRPG
                 if (rand <= 40)
                 {
                     failDungeon(user);
-                    return dungeonClear;
                 }
                 else
                 {
-                    return clearDungeon(user, dungeonClear);
+                    clearDungeon(user);
                 }
             }
             else
             {
-                return clearDungeon(user, dungeonClear);
+                clearDungeon(user);
             }
         }
 
-        private int clearDungeon(Player user, int dungeonClear)
+        private void clearDungeon(Player user)
         {
             Console.Clear();
 
@@ -346,10 +347,10 @@ namespace TextRPG
 
 
             Console.WriteLine("[탐험 결과]");
-            dungeonClear++; //level up 계산
-            if (user.levelUp(dungeonClear))
+            user.dungeonClear++; //level up 계산
+            if (user.levelUp())
             {
-                dungeonClear = 0;
+                user.dungeonClear = 0;
                 Console.WriteLine("Level {0} -> {1}", user.level - 1, user.level);
             }
             //유저가 받는 데미지 계산
@@ -374,7 +375,6 @@ namespace TextRPG
             Console.Write(">>");
             Console.ReadLine();
 
-            return dungeonClear;
         }
 
         private void failDungeon(Player user)
@@ -400,14 +400,12 @@ namespace TextRPG
     class GameManager
     {
         string path = AppDomain.CurrentDomain.BaseDirectory;    
-        int dungeonClear;
         Player user;
         Store store;
         Dungeon[] dungeons;
 
         void createDate()
         {
-            dungeonClear = 0;
             user = new Player(nameCreate(), jobSelect());
             store = new Store();
             dungeons = new Dungeon[3];
@@ -512,7 +510,7 @@ namespace TextRPG
 
                 Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
                 Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
-                Console.WriteLine("1. 상태 보기\n2. 인벤토리\n3. 상점\n4. 던전입장\n5. 휴식하기\n0.저장 후 종료\n");
+                Console.WriteLine("1. 상태 보기\n2. 인벤토리\n3. 상점\n4. 던전입장\n5. 휴식하기\n0. 저장 후 종료\n");
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">>");
 
@@ -714,7 +712,7 @@ namespace TextRPG
                 if (command == 0) break;
                 else if (0 < command && command <= dungeons.Length && user.hp > 0)
                 {
-                    dungeonClear = dungeons[command - 1].tryDungeon(user, dungeonClear);
+                    dungeons[command - 1].tryDungeon(user);
                 }
                 else if (0 < command && command <= dungeons.Length && user.hp == 0)
                 {
@@ -774,8 +772,6 @@ namespace TextRPG
 
         void saveData()
         {
-            string dungeonClearData = JsonConvert.SerializeObject(dungeonClear);
-            File.WriteAllText(path + "\\DungeonClearData.json", dungeonClearData);
 
             string userData = JsonConvert.SerializeObject(user);
             File.WriteAllText(path + "\\UserData.json", userData);
@@ -834,10 +830,6 @@ namespace TextRPG
                 createDate();
                 return;
             }
-
-            string dungeonClearData = File.ReadAllText(path + "\\dungeonClearData.json");
-            int dungeonClearLoadData = JsonConvert.DeserializeObject<int>(dungeonClearData);
-            dungeonClear = dungeonClearLoadData;
 
             string userLData = File.ReadAllText(path + "\\UserData.json");
             Player userLoadData = JsonConvert.DeserializeObject<Player>(userLData);
@@ -911,7 +903,7 @@ namespace TextRPG
   
         static void Main(string[] args)
         {
-
+            //저장 데이터 로드 후 실행
             GameManager gameManager = new GameManager();
             gameManager.loadData();
             gameManager.GamePlay();
