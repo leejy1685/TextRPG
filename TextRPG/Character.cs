@@ -6,11 +6,18 @@ using System.Threading.Tasks;
 
 namespace TextRPG
 {
+    enum Job
+    {
+        Warrior,
+        Thief,
+        Barbarian
+    };
+
     class Character
     {
         public int Level { get; private set; }
         public string Name { get; }
-        public string Job { get; }
+        public Job job { get; set; }
         public int Atk { get; }
         public int Def { get; }
         public int Hp { get; set; }
@@ -33,14 +40,31 @@ namespace TextRPG
             }
         }
 
-        public Character(int level, string name, string job, int atk, int def, int hp, int gold)
+        public Character(int level, string name, Job job, int gold)
         {
             Level = level;
             Name = name;
-            Job = job;
-            Atk = atk;
-            Def = def;
-            Hp = hp;
+            this.job = job;
+            switch (this.job)   //직업에 따른 스텟 분배
+            {
+                case Job.Warrior:
+                    Atk = 10;
+                    Def = 5;
+                    Hp = 100;
+                    break;
+
+                case Job.Thief:
+                    Atk = 12;
+                    Def = 5;
+                    Hp = 90;
+                    break;
+
+                case Job.Barbarian:
+                    Atk = 8;
+                    Def = 5;
+                    Hp = 120;
+                    break;
+            }
             Gold = gold;
             Exp = 0;
             ExpBar = 1;
@@ -49,7 +73,20 @@ namespace TextRPG
         public void DisplayCharacterInfo()
         {
             Console.WriteLine($"Lv. {Level:D2}");
-            Console.WriteLine($"{Name} {{ {Job} }}");
+            string jobStr = "";
+            switch (job)
+            {
+                case Job.Warrior:
+                    jobStr = "전사";
+                    break;
+                case Job.Thief:
+                    jobStr = "도적";
+                    break;
+                case Job.Barbarian:
+                    jobStr = "바바리안";
+                    break;
+            }
+            Console.WriteLine($"{Name} {{ {jobStr} }}");
             Console.WriteLine(ExtraAtk == 0 ? $"공격력 : {Atk}" : $"공격력 : {Atk + ExtraAtk} (+{ExtraAtk})");
             Console.WriteLine(ExtraDef == 0 ? $"방어력 : {Def}" : $"방어력 : {Def + ExtraDef} (+{ExtraDef})");
             Console.WriteLine($"체력 : {Hp}");
@@ -133,5 +170,22 @@ namespace TextRPG
             }
             return false;
         }
+
+        //public void PlayerGetDamage(Monster monster) // 플레이어가 입는 피해 계산
+        //{
+        //    // ## 플레이어가 입을 피해량 계산 ##
+        //    Random rand = new Random(); // 랜덤 클래스 인스턴스 생성
+
+        //    // 몬스터 공격력의 최소(0.9) ~ 최대(1.1) 랜덤값 계산
+        //    // double damageRandom = rand.NextDouble(monster.Atk * 0.9, monster.Atk * 1.1); 
+        //    // int GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
+
+        //    // ## 플레이어 체력 차감 ##
+        //    // Hp -= GetDamage; // 체력에서 데미지 차감
+        //    if (Hp <= 0) // 만약 체력이 0 이하라면
+        //    {
+        //        Hp = 0; // 체력을 0으로 설정 - 사망
+        //    }
+        //}
     }
 }
