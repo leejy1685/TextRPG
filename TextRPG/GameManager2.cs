@@ -16,6 +16,8 @@ namespace TextRPG
         private Character player;
         private Item[] itemDb;
         private Dungeon[] dungeons;
+        private Monster monster;
+        private Monster monster2;
 
         private Random random;
 
@@ -128,7 +130,6 @@ namespace TextRPG
             //Console.WriteLine("0. 저장 후 종료");
             Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
-
 
             int command = inputCommand(1, 5);
 
@@ -414,11 +415,6 @@ namespace TextRPG
             Console.Clear();
             Console.WriteLine("던전입장");
             Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
-
-            for (int i = 0; i < dungeons.Length; i++)
-            {   //던전의 정보를 표시
-                Console.WriteLine($"{i + 1}. {dungeons[i].DungeonInfo()}");
-            }
 
             Console.WriteLine("0. 나가기\n");
             Console.WriteLine("원하시는 행동을 입력해주세요.");

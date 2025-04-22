@@ -30,7 +30,7 @@ namespace TextRPG
             return $"{name}\t| 방어력 {recDef} 이상 권장";
         }
 
-        public int dungeonDamage(Character2 player)
+        public int dungeonDamage(Character player)
         {
             //유저가 받는 데미지 계산
             int def = player.Def - recDef;
@@ -43,7 +43,7 @@ namespace TextRPG
         }
 
         //던전 클리어 시 골드 계산
-        public int DungeonClearGold(Character2 player)
+        public int DungeonClearGold(Character player)
         {
             return clearGold + (clearGold * random.Next(player.Atk, player.Atk * 2)) / 100;
         }
