@@ -21,6 +21,9 @@ namespace TextRPG
         public int Atk { get; }
         public int Def { get; }
         public int Hp { get; set; }
+        public int Mp { get; set; } // MP - 스킬 사용에 필요한 마나
+        public int Maxhp { get; set; } // 최대 hp
+        public int Maxmp { get; set; } // 최대 mp
         public int Gold { get; set; }
 
         public int Exp { get; private set; }
@@ -32,6 +35,8 @@ namespace TextRPG
         public List<Item> Inventory = new List<Item>();
         public Item[] EquipList = new Item[2];
 
+        public Skill[] skillDb; // 스킬 DB
+
         public int InventoryCount
         {
             get
@@ -40,10 +45,11 @@ namespace TextRPG
             }
         }
 
-        public Character(int level, string name, Job job, int gold)
+        public Character(int level, string name, Job job, int mp, int gold)
         {
             Level = level;
             Name = name;
+            Mp = mp; // mp 초기화
             this.job = job;
             switch (this.job)   //직업에 따른 스텟 분배
             {
@@ -65,6 +71,9 @@ namespace TextRPG
                     Hp = 120;
                     break;
             }
+            Maxhp = Hp; // 최대 hp 저장
+            Maxmp = Mp; // 최대 mp 저장
+            Mp = mp;
             Gold = gold;
             Exp = 0;
             ExpBar = 10;
@@ -161,7 +170,7 @@ namespace TextRPG
         public bool LevelUp(Monster monster)
         {
             // 경험치 획득량 계산 : 몬스터들의 레벨을 합친 값
-            int sumExp = monster.Level;
+            int sumExp = monster.level;
 
             Exp += sumExp; // 경험치 획득
 
@@ -189,6 +198,36 @@ namespace TextRPG
             }
             return false;
         }
+
+        public void DisplayBattlePlayerInfo() // 전투 중 플레이어 정보 표시
+        {
+            string jobStr = "";
+            switch (job)
+            {
+                case Job.Warrior:
+                    jobStr = "전사";
+                    break;
+                case Job.Thief:
+                    jobStr = "도적";
+                    break;
+                case Job.Barbarian:
+                    jobStr = "바바리안";
+                    break;
+            }
+            Console.WriteLine($"Lv.{Level} {Name} ({jobStr})\nHP {Hp}/{Maxhp}\nMP {Mp}/{Maxmp}");
+        }
+
+        public void SkillSet() // 스킬 목록
+        {
+            skillDb = new Skill[]
+            {
+                // 이름, 비용, 공격력 배율, 설명
+                new Skill("알파 스트라이크", 10, 2.0f, $"공격력 * 2 로 하나의 적을 공격합니다."),
+                new Skill("더블 스트라이크", 15, 1.5f, $"공격력 * 1.5 로 적을 랜덤으로 공격합니다.")
+            };
+        }
+
+        
 
         //public void PlayerGetDamage(Monster monster) // 플레이어가 입는 피해 계산
         //{
