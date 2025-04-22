@@ -13,7 +13,7 @@ namespace TextRPG
         //저장 경로
         string path = AppDomain.CurrentDomain.BaseDirectory;
         //게임 진행에 필요한 3가지 클래스
-        private Character2 player;
+        private Character player;
         private Item[] itemDb;
         private Dungeon[] dungeons;
 
@@ -26,7 +26,7 @@ namespace TextRPG
 
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
-            player = new Character2(1, nameCreate(), jobSelect(), 1500);
+            player = new Character(1, nameCreate(), jobSelect(), 1500);
             dungeons = new Dungeon[3];
 
             itemDb = new Item[]
