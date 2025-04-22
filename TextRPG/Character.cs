@@ -67,7 +67,7 @@ namespace TextRPG
             }
             Gold = gold;
             Exp = 0;
-            ExpBar = 1;
+            ExpBar = 10;
         }
 
         public void DisplayCharacterInfo()
@@ -158,14 +158,33 @@ namespace TextRPG
             return Inventory.Contains(item);
         }
 
-        public bool LevelUp()
+        public bool LevelUp(Monster monster)
         {
-            Exp++;
-            if(ExpBar == Exp)
+            // 경험치 획득량 계산 : 몬스터들의 레벨을 합친 값
+            int sumExp = monster.Level;
+
+            Exp += sumExp; // 경험치 획득
+
+            if(Exp >= ExpBar) // 현재 Exp가 ExpBar 이상일 경우
             {
-                Level++;
-                ExpBar++;
-                Exp = 0;
+                Level++; // 레벨업
+                Exp -= ExpBar; // 레벨업 후 잔존 경험치 계산
+
+                switch(Level) // 레벨업에 따른 ExpBar 증가
+                {
+                    case 2: // 레벨이 2로 올랐을 때
+                        ExpBar = 35; // 2 -> 3을 위한 값
+                        break;
+                    case 3: // 레벨이 3으로 올랐을 때
+                        ExpBar = 65; // 3 -> 4를 위한 값
+                        break;
+                    case 4: // 레벨이 4로 올랐을 때
+                        ExpBar = 100; // 4 -> 5를 위한 값
+                        break;
+                    default: // 레벨이 5이상일 때
+                        ExpBar = 100;
+                        break;
+                }
                 return true;    
             }
             return false;
