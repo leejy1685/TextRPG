@@ -8,13 +8,37 @@ namespace TextRPG
 {
     class Item
     {
-        //아이템이 공통으로 가지고 있는 정보
-        public string name { get; set; }
-        public string showing { get; set; }
-        public int price { get; set; }
+        public string Name { get; }
+        public int Type { get; }
+        public int Value { get; }
+        public string Desc { get; }
+        public int Price { get; }
 
-        //아이템 정보를 표시하는 가상 메서드
-        public virtual void itemInfo() { }
-        public virtual void itemInfo(string pri) { }
+        public string DisplayTypeText
+        {
+            get
+            {
+                return Type == 0 ? "공격력" : "방어력";
+            }
+        }
+
+        public Item(string name, int type, int value, string desc, int price)
+        {
+            Name = name;
+            Type = type;
+            Value = value;
+            Desc = desc;
+            Price = price;
+        }
+
+        public Item()
+        {
+
+        }
+
+        public string ItemInfoText()
+        {
+            return $"{Name}  |  {DisplayTypeText} +{Value}  |  {Desc}";
+        }
     }
 }

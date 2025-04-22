@@ -1,1 +1,1 @@
-[{"name":"쉬운 던전","recDefence":5,"clearGold":1000,"random":{}},{"name":"일반 던전","recDefence":11,"clearGold":1700,"random":{}},{"name":"어려운 던전","recDefence":17,"clearGold":2500,"random":{}}]
+[{"name":"쉬운 던전","recDef":5,"clearGold":1000,"random":{}},{"name":"일반 던전","recDef":11,"clearGold":1700,"random":{}},{"name":"어려운 던전","recDef":17,"clearGold":2500,"random":{}}]
