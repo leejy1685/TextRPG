@@ -9,9 +9,9 @@ namespace TextRPG
     class Monster
     {
         public int level { get; set; }
-        string name{ get; set; }
-        int Atk { get; set; }
-        int Hp {  get; set; }
+        public string name{ get; set; }
+        public int Atk { get; set; }
+        public int Hp {  get; set; }
         public Monster(int level, string name,int atk,int hp)
         {
             this.level = level;
