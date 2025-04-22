@@ -21,7 +21,7 @@ namespace TextRPG
 
         public void SetData() // 게임 시작 시 초기 세팅
         {
-            player = new Character(1, nameCreate(), jobSelect(), 1500); // 이름, 직업, 초기 골드
+            player = new Character(1, nameCreate(), jobSelect(),50, 1500); // 이름, 직업, 초기 골드
 
             // 아이템 데이터 초기화
             itemDb = new Item[]

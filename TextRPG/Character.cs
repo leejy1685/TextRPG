@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -227,23 +228,24 @@ namespace TextRPG
             };
         }
 
-        
+        public bool isDie()
+        {
+            return Hp <= 0;
+        }
 
-        //public void PlayerGetDamage(Monster monster) // 플레이어가 입는 피해 계산
-        //{
-        //    // ## 플레이어가 입을 피해량 계산 ##
-        //    Random rand = new Random(); // 랜덤 클래스 인스턴스 생성
 
-        //    // 몬스터 공격력의 최소(0.9) ~ 최대(1.1) 랜덤값 계산
-        //    // double damageRandom = rand.NextDouble(monster.Atk * 0.9, monster.Atk * 1.1); 
-        //    // int GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
 
-        //    // ## 플레이어 체력 차감 ##
-        //    // Hp -= GetDamage; // 체력에서 데미지 차감
-        //    if (Hp <= 0) // 만약 체력이 0 이하라면
-        //    {
-        //        Hp = 0; // 체력을 0으로 설정 - 사망
-        //    }
-        //}
+        public int PlayerGetDamage(int atk) // 플레이어가 입는 피해 계산
+        {
+            // ## 플레이어가 입을 피해량 계산 ##
+            Random rand = new Random(); // 랜덤 클래스 인스턴스 생성
+
+            // 몬스터 공격력의 최소(0.9) ~ 최대(1.1) 랜덤값 계산
+            double damageRandom = atk * rand.Next( 9, 12)/10.0f;
+            int GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
+
+            return GetDamage;
+            
+        }
     }
 }

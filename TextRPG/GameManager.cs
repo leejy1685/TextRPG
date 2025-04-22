@@ -28,7 +28,7 @@ namespace TextRPG
 
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
-            player = new Character(1, nameCreate(), jobSelect(), 1500);
+            player = new Character(1, nameCreate(), jobSelect(),50, 1500);
             monsters = new Monster[3];
 
             itemDb = new Item[]
@@ -424,7 +424,7 @@ namespace TextRPG
             }
             Console.WriteLine();
             Console.WriteLine("[내정보]");
-            //유저 정보
+            player.DisplayBattlePlayerInfo();
             Console.WriteLine();
 
             Console.WriteLine("1. 공격");
@@ -567,7 +567,7 @@ namespace TextRPG
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
-            Console.WriteLine($"HP {player.maxHp} -> {player.Hp}");
+            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
@@ -589,7 +589,7 @@ namespace TextRPG
             Console.WriteLine("You Lose");
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
-            Console.WriteLine($"HP {player.maxHp} -> {player.Hp}");
+            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
