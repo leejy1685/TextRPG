@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "UlLkIpYrATM=",
+  "dgSpecHash": "my2lr/C/xmQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\이준영\\Documents\\GitHub\\TextRPG\\TextRPG\\TextRPG.csproj",
+  "projectFilePath": "C:\\Users\\ggi00\\Documents\\GitHub\\TextRPG\\TextRPG\\TextRPG.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\이준영\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "C:\\Users\\ggi00\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
   ],
   "logs": []
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -16,6 +17,7 @@ namespace TextRPG
         private Character player;
         private Item[] itemDb;
         private Dungeon[] dungeons;
+        Monster[] monsters;
 
         private Random random;
 
@@ -26,8 +28,8 @@ namespace TextRPG
 
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
-            player = new Character(1, nameCreate(), jobSelect(), 10, 5, 100, 1500);
-            dungeons = new Dungeon[3];
+            player = new Character(1, nameCreate(), jobSelect(),50, 1500);
+            monsters = new Monster[3];
 
             itemDb = new Item[]
             {
@@ -41,89 +43,75 @@ namespace TextRPG
             new Item("스파르타의 창", 0, 7,"스파르타의 전사들이 사용했다는 전설의 창입니다. ",2500)
             };
 
-            dungeons = new Dungeon[]
-            {
-                new Dungeon("쉬운 던전", 5, 1000),
-                new Dungeon("일반 던전", 11, 1700),
-                new Dungeon("어려운 던전", 17, 2500)
-            };
 
+            monsters = new Monster[]
+            {
+                    new Monster(2, "미니언", 5, 15),
+                    new Monster(3,"공허충",9,10),
+                    new Monster(5,"대포미니언",10,20)
+            };
         }
 
         //플레이어 캐릭터의 이름을 만드는 메서드
         string nameCreate()
         {
-            string name = "";
-            while (true)
+            Console.Clear();
+
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            Console.WriteLine("원하시는 이름을 설정해 주세요\n");
+
+            string name = Console.ReadLine();
+
+
+            Console.WriteLine("\n입력하신 이름은 {0} 입니다.\n", name);
+            Console.WriteLine("1. 저장\n2. 취소\n");
+            Console.WriteLine("원하시는 행동을 입력해 주세요.");
+
+            int command = inputCommand(1, 2);
+
+            switch (command)
             {
-                Console.Clear();
-
-                Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
-                Console.WriteLine("원하시는 이름을 설정해 주세요\n");
-
-                name = Console.ReadLine();
-
-                int command = 0;
-                while (true)
-                {
-                    Console.WriteLine("\n입력하신 이름은 {0} 입니다.\n", name);
-                    Console.WriteLine("1. 저장\n2. 취소\n");
-                    Console.WriteLine("원하시는 행동을 입력해 주세요.");
-
-                    command = inputCommand(1, 2);
-
-
-                    if (command == 1)
-                    {
-                        break;
-                    }
-                    else if (command == 2)
-                    {
-                        break;
-                    }
-                }
-
-                if (command == 1)
-                {
+                case 1:
                     break;
-                }
-                else if (command == 2)
-                {
-                    continue;
-                }
+                case 2:
+                    nameCreate();
+                    break;
             }
 
             return name;
         }
 
         //플레이어 캐릭터의 직업을 선택하는 메서드
-        string jobSelect()
+        Job jobSelect()
         {
-            string job;
-            while (true)
+            Job job = Job.Warrior;
+            Console.Clear();
+
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            Console.WriteLine("원하시는 직업을 설정해 주세요.");
+            Console.WriteLine();
+            Console.WriteLine("1. 전사");
+            Console.WriteLine("2. 도적");
+            Console.WriteLine("3. 바바리안");
+            Console.WriteLine();    
+            Console.WriteLine("원하시는 행동을 입력해 주세요.");
+            int command = inputCommand(1, 3);
+
+            switch (command)
             {
-                Console.Clear();
-
-                Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
-                Console.WriteLine("원하시는 직업을 설정해 주세요\n");
-                Console.WriteLine("1. 전사\n2. 도적\n");
-
-                Console.WriteLine("원하시는 행동을 입력해 주세요.");
-                int command = inputCommand(1, 2);
-
-                if (command == 1)
-                {
-                    job = "전사";
+                case 1:
+                    job = Job.Warrior;
                     break;
-                }
-                else if (command == 2)
-                {
-                    job = "도적";
+
+                case 2:
+                    job = Job.Thief;
                     break;
-                }
 
-
+                case 3:
+                    job = Job.Barbarian;
+                    break;
             }
+
             return job;
         }
         //게임을 진행하는 메서드
@@ -160,7 +148,7 @@ namespace TextRPG
                     DisplayShopUI();//상점 열기
                     break;
                 case 4:
-                    DisplayDungeonUI();//던전 열기
+                    DisplayBattleUI();//던전 열기
                     break;
                 case 5:
                     DisplayRestUI();//휴식
@@ -422,116 +410,200 @@ namespace TextRPG
 
         }
 
-        //입장할 수 있는 던전을 표시하는 메서드
-        void DisplayDungeonUI()
+        void DisplayBattleUI()
         {
             Console.Clear();
-            Console.WriteLine("던전입장");
-            Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
+            Console.WriteLine("Battle!!\n");
 
-            for (int i = 0; i < dungeons.Length; i++)
-            {   //던전의 정보를 표시
-                Console.WriteLine($"{i + 1}. {dungeons[i].DungeonInfo()}");
+            //몬스터 생성되는 함수
+
+            //몬스터 정보 표시되는 함수
+            foreach (Monster monster in monsters)
+            {
+                Console.WriteLine(monster.monsterInfo());
             }
+            Console.WriteLine();
+            Console.WriteLine("[내정보]");
+            player.DisplayBattlePlayerInfo();
+            Console.WriteLine();
 
-            Console.WriteLine("0. 나가기\n");
+            Console.WriteLine("1. 공격");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
-            int command = inputCommand(0, dungeons.Length);
+            int command = inputCommand(1, 1);
+
+            switch (command)
+            {
+                case 1:
+                    DisplayAttackUI();
+                    break;
+            }
+
+
+        }
+
+        void DisplayAttackUI()
+        {
+            Console.Clear();
+            Console.WriteLine("Battle!!\n");
+
+            //몬스터 생성되는 함수
+
+            //몬스터 정보 표시되는 함수
+            for (int i = 0; i < monsters.Length; i++) {
+                Console.WriteLine($"{i + 1} {monsters[i].monsterInfo()}");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("[내정보]");
+
+            // 캐릭터 정보
+            Console.WriteLine();
+            Console.WriteLine("0. 취소");
+            Console.WriteLine("대상을 선택해주세요.");
+
+            int command = inputCommand(0, monsters.Length);
+
+            switch (command)
+            {
+                case 0:
+                    DisplayBattleUI();
+                    break;
+                default:
+                    int targetMonster = command - 1;
+                    DisplayMonsterDamageUI(targetMonster);
+                    break;
+
+
+
+            }
+        }
+
+        void DisplayMonsterDamageUI(int targetMonster)
+        {
+            Console.Clear();
+            Console.WriteLine("Battle!!\n");
+
+            Console.WriteLine($"{player.Name}의 공격!");
+            Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. " +
+                $"[대미지 : {monsters[targetMonster].MonsterGetDamage(player.Atk)}]");
+            Console.WriteLine();
+            Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} ");
+
+            int monsterHp = monsters[targetMonster].Hp - monsters[targetMonster].MonsterGetDamage(player.Atk);
+
+            Console.WriteLine("HP {0} -> {1}", monsters[targetMonster].Hp, monsters[targetMonster].isDie() ? "Dead": monsterHp);
+
+            //대미지 입히는거 계산
+            monsters[targetMonster].Hp = monsterHp;
+
+            Console.WriteLine("0. 다음");
+
+            int command = inputCommand(0, 0);
+
+            switch (command)
+            {
+                case 0:
+                    int aliveMon = monsters.Length;
+                    foreach(Monster monster in monsters)
+                    {
+                        if (monster.isDie())
+                            aliveMon--;
+                    }
+                    if (aliveMon == 0)
+                        DisplayVictoryUI();
+                    
+                    DisplayEnemyPhaseUI();
+                    break;
+            }
+
+        }
+
+        void DisplayEnemyPhaseUI()
+        {
+            foreach (Monster monster in monsters) 
+            {
+                if (!monster.isDie())
+                {
+                    Console.Clear();
+                    Console.WriteLine("Battle!!\n");
+
+                    Console.WriteLine($"Lv.{monster.level} {monster.name} 의 공격!");
+                    Console.WriteLine($"{player.Name} 을(를) 맞췄습니다. [데미지 : {player.PlayerGetDamage(monster.Atk)}]");
+                    Console.WriteLine();
+                    Console.WriteLine($"Lv.{player.Level} {player.Name}");
+                    Console.WriteLine($"HP {player.Hp} -> {player.Hp - player.PlayerGetDamage(monster.Atk)}");
+
+                    player.Hp -= player.PlayerGetDamage(monster.Atk);
+
+                    Console.WriteLine("0. 다음\n");
+                    Console.WriteLine("대상을 선택해주세요.");
+
+                    int command = inputCommand(0, 0);
+
+                    switch (command)
+                    {
+                        case 0:
+                            if (player.isDie())
+                                DisplayLoseUI();
+                        
+                            if (monster == monsters[monsters.Length - 1])
+                                DisplayAttackUI();
+                            break;
+                    }
+
+
+                }
+            }
+        }
+
+
+        void DisplayVictoryUI()
+        {
+            Console.Clear();
+            Console.WriteLine("Battle!! - Result\n");
+            Console.WriteLine("Victory");
+            Console.WriteLine();
+            Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
+            Console.WriteLine();
+            Console.WriteLine($"Lv.{player.Level} {player.Name}");
+            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.WriteLine();
+            Console.WriteLine("0. 다음");
+            Console.WriteLine();
+
+            int command = inputCommand(0, 0);
 
             switch (command)
             {
                 case 0:
                     DisplayMainUI();
                     break;
-                default:
-                    if (player.Hp > 0)
-                    {
-                        int dungeonNum = command - 1;
-                        DungeonTry(dungeonNum);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Console.WriteLine(\"체력이 부족합니다.\");");
-                    }
-                    break;
-
-            }
-
-        }
-
-        void DungeonTry(int dungeonNum)
-        {
-            if (player.Def < dungeons[dungeonNum].recDef)
-            {   //권장 방어력 보다 낮으면 40퍼 확률로 실패
-                int rand = random.Next(1, 101);
-                if (rand <= 40)
-                {
-                    failDungeon(dungeonNum);
-                }
-                else
-                {
-                    clearDungeon(dungeonNum);
-                }
-            }
-            else
-            {
-                clearDungeon(dungeonNum);
             }
         }
 
-        void failDungeon(int dungeonNum)
+        void DisplayLoseUI()
         {
             Console.Clear();
-            Console.WriteLine("던전 실패");
-            Console.WriteLine("{0}의 공략을 실패 하셨습니다.\n", dungeons[dungeonNum].name);
-            Console.WriteLine("[탐험 결과]");
-            Console.WriteLine("체력 {0} -> {1}", player.Hp, player.Hp / 2);
-
-            player.Hp /= 2;
-
-            Console.WriteLine("\n0. 나가기\n");
-            Console.WriteLine("원하시는 행동을 입력해 주세요");
-
-            int command = inputCommand(0, 0);
-
-            if (command == 0) DisplayDungeonUI();
-        }
-
-        void clearDungeon(int dungeonNum)
-        {
-            Console.Clear();
-            Console.WriteLine("던전 클리어");
-            Console.WriteLine("축하합니다!!");
-            Console.WriteLine("{0}을 클리어 하셨습니다.", dungeons[dungeonNum].name);
+            Console.WriteLine("Battle!! - Result\n");
+            Console.WriteLine("You Lose");
             Console.WriteLine();
-            Console.WriteLine("[탐험 결과]");
+            Console.WriteLine($"Lv.{player.Level} {player.Name}");
+            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.WriteLine();
+            Console.WriteLine("0. 다음");
+            Console.WriteLine();
 
-            if (player.LevelUp())
+            int command = inputCommand(0,0);
+
+            switch (command)
             {
-                Console.WriteLine("Level {0} -> {1}", player.Level - 1, player.Level);
+                case 0:
+                    DisplayMainUI();
+                    break;
             }
-
-            int userHp = dungeons[dungeonNum].dungeonDamage(player);
-
-            Console.WriteLine("체력 {0} -> {1}", player.Hp, userHp);
-
-            player.Hp = userHp; //체력 반영
-
-            //보상 계산
-            int newGold = dungeons[dungeonNum].DungeonClearGold(player);
-            Console.WriteLine("Gold {0} G -> {1} G", player.Gold, player.Gold + newGold);
-
-            player.Gold += newGold;//보상 반영
-
-            Console.WriteLine("\n0. 나가기\n");
-            Console.WriteLine("원하시는 행동을 입력해 주세요");
-
-            int command = inputCommand(0, 0);
-
-            if (command == 0) DisplayDungeonUI();
         }
-        // 휴식하기 기능
+
         void DisplayRestUI()
         {
             Console.Clear();
@@ -585,57 +657,6 @@ namespace TextRPG
             }
         }
 
-        //데이터를 저장하는 메서드
-        void saveData()
-        {
-            //유저 데이터 저장
-            string playerData = JsonConvert.SerializeObject(player);
-            File.WriteAllText(path + "\\playerData.json", playerData);
-
-            //상점 데이터를 저장
-            //여기는 판매여부를 판단하는 정보만 저장
-            string itemDbData = JsonConvert.SerializeObject(itemDb);
-            File.WriteAllText(path + "\\itemDbData.json", itemDbData);
-
-            //던전의 정보를 저장
-            //없어도 되는 과정
-            string dungeonData = JsonConvert.SerializeObject(dungeons);
-            File.WriteAllText(path + "\\dungeonData.json", dungeonData);
-        }
-
-        //저장된 정보를 가져오는 메서드
-        public void loadData()
-        {
-            //유저 데이터가 있는지 확인
-            if (!File.Exists(path + "\\playerData.json"))
-            {   //데이터가 없으면 새로 생성
-                SetData();
-                return;
-            }
-
-            //유저의 정보를 가져오기
-            string playerLData = File.ReadAllText(path + "\\playerData.json");
-            Character userLoadData = JsonConvert.DeserializeObject<Character>(playerLData);
-            player = userLoadData;
-
-            //상점 정보 가져오기
-            string itemDbData = File.ReadAllText(path + "\\itemDbData.json");
-            Item[] storeLoadData = JsonConvert.DeserializeObject<Item[]>(itemDbData);
-            itemDb = storeLoadData;
-
-            //던전 데이터 가져오기
-            //없어도 되는 과정
-            //DungeonCreate 메서드를 구현해서 사용해도 됨.
-            string dungeonData = File.ReadAllText(path + "\\dungeonData.json");
-            Dungeon[] dungeonLoadData = JsonConvert.DeserializeObject<Dungeon[]>(dungeonData);
-            if (dungeons == null)
-            {
-                dungeons = new Dungeon[3];
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                dungeons[i] = dungeonLoadData[i];
-            }
-        }
+       
     }
 }
