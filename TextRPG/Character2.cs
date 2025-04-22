@@ -6,11 +6,18 @@ using System.Threading.Tasks;
 
 namespace TextRPG
 {
-    class Character
+    enum Job
+    {
+        Warrior,
+        Thief,
+        Barbarian
+    };
+
+    class Character2
     {
         public int Level { get; private set; }
         public string Name { get; }
-        public string Job { get; }
+        public Job job { get; set; }
         public int Atk { get; }
         public int Def { get; }
         public int Hp { get; set; }
@@ -33,14 +40,31 @@ namespace TextRPG
             }
         }
 
-        public Character(int level, string name, string job, int atk, int def, int hp, int gold)
+        public Character2(int level, string name, Job job, int gold)
         {
             Level = level;
             Name = name;
-            Job = job;
-            Atk = atk;
-            Def = def;
-            Hp = hp;
+            this.job = job;
+            switch (this.job)   //직업에 따른 스텟 분배
+            {
+                case Job.Warrior:
+                    Atk = 10;
+                    Def = 5;
+                    Hp = 100;
+                    break;
+
+                case Job.Thief:
+                    Atk = 12;
+                    Def = 5;
+                    Hp = 90; 
+                    break;
+
+                case Job.Barbarian:
+                    Atk = 8;
+                    Def = 5;
+                    Hp = 120;
+                    break;
+            }
             Gold = gold;
             Exp = 0;
             ExpBar = 1;
@@ -49,14 +73,27 @@ namespace TextRPG
         public void DisplayCharacterInfo()
         {
             Console.WriteLine($"Lv. {Level:D2}");
-            Console.WriteLine($"{Name} {{ {Job} }}");
+            string jobStr = "";
+            switch (job)
+            {
+                case Job.Warrior:
+                    jobStr = "전사";
+                    break;
+                case Job.Thief:
+                    jobStr = "도적";
+                    break;
+                case Job.Barbarian:
+                    jobStr = "바바리안";
+                    break;
+            }
+            Console.WriteLine($"{Name} {{ {jobStr} }}");
             Console.WriteLine(ExtraAtk == 0 ? $"공격력 : {Atk}" : $"공격력 : {Atk + ExtraAtk} (+{ExtraAtk})");
             Console.WriteLine(ExtraDef == 0 ? $"방어력 : {Def}" : $"방어력 : {Def + ExtraDef} (+{ExtraDef})");
             Console.WriteLine($"체력 : {Hp}");
             Console.WriteLine($"Gold : {Gold} G");
         }
 
-        public void DisplayInventory(bool showIdx,bool showPrice)
+        public void DisplayInventory(bool showIdx, bool showPrice)
         {
             for (int i = 0; i < Inventory.Count; i++)
             {
@@ -93,7 +130,7 @@ namespace TextRPG
                 }
                 else
                 {
-                    EquipList[item.Type] =item;
+                    EquipList[item.Type] = item;
                     ExtraDef += item.Value;
                 }
             }
@@ -112,7 +149,7 @@ namespace TextRPG
 
         public void SellItem(Item item)
         {
-            Gold += item.Price/100*85;
+            Gold += item.Price / 100 * 85;
             Inventory.Remove(item);
         }
 
@@ -124,12 +161,12 @@ namespace TextRPG
         public bool LevelUp()
         {
             Exp++;
-            if(ExpBar == Exp)
+            if (ExpBar == Exp)
             {
                 Level++;
                 ExpBar++;
                 Exp = 0;
-                return true;    
+                return true;
             }
             return false;
         }
