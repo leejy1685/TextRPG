@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace TextRPG
 {
-    class GameManager
+    class GameManager2
     {
         //저장 경로
         string path = AppDomain.CurrentDomain.BaseDirectory;
@@ -19,14 +19,14 @@ namespace TextRPG
 
         private Random random;
 
-        public GameManager()
+        public GameManager2()
         {
             random = new Random();
         }
 
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
-            player = new Character(1, nameCreate(), jobSelect(), 10, 5, 100, 1500);
+            player = new Character(1, nameCreate(), jobSelect(), 1500);
             dungeons = new Dungeon[3];
 
             itemDb = new Item[]
@@ -53,77 +53,63 @@ namespace TextRPG
         //플레이어 캐릭터의 이름을 만드는 메서드
         string nameCreate()
         {
-            string name = "";
-            while (true)
+            Console.Clear();
+
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            Console.WriteLine("원하시는 이름을 설정해 주세요\n");
+
+            string name = Console.ReadLine();
+
+
+            Console.WriteLine("\n입력하신 이름은 {0} 입니다.\n", name);
+            Console.WriteLine("1. 저장\n2. 취소\n");
+            Console.WriteLine("원하시는 행동을 입력해 주세요.");
+
+            int command = inputCommand(1, 2);
+
+            switch (command)
             {
-                Console.Clear();
-
-                Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
-                Console.WriteLine("원하시는 이름을 설정해 주세요\n");
-
-                name = Console.ReadLine();
-
-                int command = 0;
-                while (true)
-                {
-                    Console.WriteLine("\n입력하신 이름은 {0} 입니다.\n", name);
-                    Console.WriteLine("1. 저장\n2. 취소\n");
-                    Console.WriteLine("원하시는 행동을 입력해 주세요.");
-
-                    command = inputCommand(1, 2);
-
-
-                    if (command == 1)
-                    {
-                        break;
-                    }
-                    else if (command == 2)
-                    {
-                        break;
-                    }
-                }
-
-                if (command == 1)
-                {
+                case 1:
                     break;
-                }
-                else if (command == 2)
-                {
-                    continue;
-                }
+                case 2:
+                    nameCreate();
+                    break;
             }
 
             return name;
         }
 
         //플레이어 캐릭터의 직업을 선택하는 메서드
-        string jobSelect()
+        Job jobSelect()
         {
-            string job;
-            while (true)
+            Job job = Job.Warrior;
+            Console.Clear();
+
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            Console.WriteLine("원하시는 직업을 설정해 주세요.");
+            Console.WriteLine();
+            Console.WriteLine("1. 전사");
+            Console.WriteLine("2. 도적");
+            Console.WriteLine("3. 바바리안");
+            Console.WriteLine();    
+            Console.WriteLine("원하시는 행동을 입력해 주세요.");
+            int command = inputCommand(1, 3);
+
+            switch (command)
             {
-                Console.Clear();
-
-                Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
-                Console.WriteLine("원하시는 직업을 설정해 주세요\n");
-                Console.WriteLine("1. 전사\n2. 도적\n");
-
-                Console.WriteLine("원하시는 행동을 입력해 주세요.");
-                int command = inputCommand(1, 2);
-
-                if (command == 1)
-                {
-                    job = "전사";
+                case 1:
+                    job = Job.Warrior;
                     break;
-                }
-                else if (command == 2)
-                {
-                    job = "도적";
+
+                case 2:
+                    job = Job.Thief;
                     break;
-                }
 
-
+                case 3:
+                    job = Job.Barbarian;
+                    break;
             }
+
             return job;
         }
         //게임을 진행하는 메서드
@@ -471,12 +457,12 @@ namespace TextRPG
                 }
                 else
                 {
-                    clearDungeon(dungeonNum);
+                    //clearDungeon(dungeonNum);
                 }
             }
             else
             {
-                clearDungeon(dungeonNum);
+                //clearDungeon(dungeonNum);
             }
         }
 
@@ -498,39 +484,39 @@ namespace TextRPG
             if (command == 0) DisplayDungeonUI();
         }
 
-        void clearDungeon(int dungeonNum)
-        {
-            Console.Clear();
-            Console.WriteLine("던전 클리어");
-            Console.WriteLine("축하합니다!!");
-            Console.WriteLine("{0}을 클리어 하셨습니다.", dungeons[dungeonNum].name);
-            Console.WriteLine();
-            Console.WriteLine("[탐험 결과]");
+        //void clearDungeon(int dungeonNum)
+        //{
+        //    Console.Clear();
+        //    Console.WriteLine("던전 클리어");
+        //    Console.WriteLine("축하합니다!!");
+        //    Console.WriteLine("{0}을 클리어 하셨습니다.", dungeons[dungeonNum].name);
+        //    Console.WriteLine();
+        //    Console.WriteLine("[탐험 결과]");
 
-            if (player.LevelUp())
-            {
-                Console.WriteLine("Level {0} -> {1}", player.Level - 1, player.Level);
-            }
+        //    if (player.LevelUp())
+        //    {
+        //        Console.WriteLine("Level {0} -> {1}", player.Level - 1, player.Level);
+        //    }
 
-            int userHp = dungeons[dungeonNum].dungeonDamage(player);
+        //    int userHp = dungeons[dungeonNum].dungeonDamage(player);
 
-            Console.WriteLine("체력 {0} -> {1}", player.Hp, userHp);
+        //    Console.WriteLine("체력 {0} -> {1}", player.Hp, userHp);
 
-            player.Hp = userHp; //체력 반영
+        //    player.Hp = userHp; //체력 반영
 
-            //보상 계산
-            int newGold = dungeons[dungeonNum].DungeonClearGold(player);
-            Console.WriteLine("Gold {0} G -> {1} G", player.Gold, player.Gold + newGold);
+        //    //보상 계산
+        //    int newGold = dungeons[dungeonNum].DungeonClearGold(player);
+        //    Console.WriteLine("Gold {0} G -> {1} G", player.Gold, player.Gold + newGold);
 
-            player.Gold += newGold;//보상 반영
+        //    player.Gold += newGold;//보상 반영
 
-            Console.WriteLine("\n0. 나가기\n");
-            Console.WriteLine("원하시는 행동을 입력해 주세요");
+        //    Console.WriteLine("\n0. 나가기\n");
+        //    Console.WriteLine("원하시는 행동을 입력해 주세요");
 
-            int command = inputCommand(0, 0);
+        //    int command = inputCommand(0, 0);
 
-            if (command == 0) DisplayDungeonUI();
-        }
+        //    if (command == 0) DisplayDungeonUI();
+        //}
         // 휴식하기 기능
         void DisplayRestUI()
         {
@@ -604,38 +590,38 @@ namespace TextRPG
         }
 
         //저장된 정보를 가져오는 메서드
-        public void loadData()
-        {
-            //유저 데이터가 있는지 확인
-            if (!File.Exists(path + "\\playerData.json"))
-            {   //데이터가 없으면 새로 생성
-                SetData();
-                return;
-            }
+        //public void loadData()
+        //{
+        //    //유저 데이터가 있는지 확인
+        //    if (!File.Exists(path + "\\playerData.json"))
+        //    {   //데이터가 없으면 새로 생성
+        //        SetData();
+        //        return;
+        //    }
 
-            //유저의 정보를 가져오기
-            string playerLData = File.ReadAllText(path + "\\playerData.json");
-            Character userLoadData = JsonConvert.DeserializeObject<Character>(playerLData);
-            player = userLoadData;
+        //    //유저의 정보를 가져오기
+        //    string playerLData = File.ReadAllText(path + "\\playerData.json");
+        //    Character userLoadData = JsonConvert.DeserializeObject<Character>(playerLData);
+        //    player = userLoadData;
 
-            //상점 정보 가져오기
-            string itemDbData = File.ReadAllText(path + "\\itemDbData.json");
-            Item[] storeLoadData = JsonConvert.DeserializeObject<Item[]>(itemDbData);
-            itemDb = storeLoadData;
+        //    //상점 정보 가져오기
+        //    string itemDbData = File.ReadAllText(path + "\\itemDbData.json");
+        //    Item[] storeLoadData = JsonConvert.DeserializeObject<Item[]>(itemDbData);
+        //    itemDb = storeLoadData;
 
-            //던전 데이터 가져오기
-            //없어도 되는 과정
-            //DungeonCreate 메서드를 구현해서 사용해도 됨.
-            string dungeonData = File.ReadAllText(path + "\\dungeonData.json");
-            Dungeon[] dungeonLoadData = JsonConvert.DeserializeObject<Dungeon[]>(dungeonData);
-            if (dungeons == null)
-            {
-                dungeons = new Dungeon[3];
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                dungeons[i] = dungeonLoadData[i];
-            }
-        }
+        //    //던전 데이터 가져오기
+        //    //없어도 되는 과정
+        //    //DungeonCreate 메서드를 구현해서 사용해도 됨.
+        //    string dungeonData = File.ReadAllText(path + "\\dungeonData.json");
+        //    Dungeon[] dungeonLoadData = JsonConvert.DeserializeObject<Dungeon[]>(dungeonData);
+        //    if (dungeons == null)
+        //    {
+        //        dungeons = new Dungeon[3];
+        //    }
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        dungeons[i] = dungeonLoadData[i];
+        //    }
+        //}
     }
 }
