@@ -79,7 +79,7 @@ namespace TextRPG
                 case 1: player.DisplayCharacterInfo(); break;
                 case 2: Console.WriteLine("[인벤토리 기능 생략됨]"); break;
                 case 3: Console.WriteLine("[상점 기능 생략됨]"); break;
-                case 4: DisplayBattleUI(); break;
+                case 4: //DisplayBattleUI(); break;
                 case 5: Console.WriteLine("[휴식 기능 생략됨]"); break;
             }
             Console.WriteLine("\n0. 나가기");
@@ -88,60 +88,60 @@ namespace TextRPG
 
 
         // 전투 시스템 (미니언 1마리만 임시 구현)
-        void DisplayBattleUI()
-        {
-            Console.Clear();
-            Console.WriteLine("Battle!!\n");
+        //void DisplayBattleUI()
+        //{
+        //    Console.Clear();
+        //    Console.WriteLine("Battle!!\n");
 
-            Monster monster = new Monster(3, "미니언", 7, 30); // 미니언 1마리 생성
-            bool playerTurn = true;
+        //    Monster monster = new Monster(3, "미니언", 7, 30); // 미니언 1마리 생성
+        //    bool playerTurn = true;
 
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("Battle!!\n");
-                Console.WriteLine($"Lv.{monster.level} {monster.name} {(monster.isDie() ? "Dead" : "HP " + monster.Hp)}");
-                Console.WriteLine($"\nLv.{player.Level} {player.Name} HP {player.Hp}/100\n");
+        //    while (true)
+        //    {
+        //        Console.Clear();
+        //        Console.WriteLine("Battle!!\n");
+        //        Console.WriteLine($"Lv.{monster.level} {monster.name} {(monster.isDie() ? "Dead" : "HP " + monster.Hp)}");
+        //        Console.WriteLine($"\nLv.{player.Level} {player.Name} HP {player.Hp}/100\n");
 
-                if (playerTurn)
-                {
-                    Console.WriteLine("1. 공격\n>> ");
-                    if (Console.ReadLine() != "1") continue;
+        //        if (playerTurn)
+        //        {
+        //            Console.WriteLine("1. 공격\n>> ");
+        //            if (Console.ReadLine() != "1") continue;
 
-                    int damage = (int)Math.Ceiling(player.Atk * (random.NextDouble() * 0.2 + 0.9));
-                    monster.playergetdamage(player);
-                    Console.WriteLine($"{player.Name} 의 공격! {monster.name}에게 {damage} 데미지!");
-                    Console.ReadLine();
-                    playerTurn = false;
-                }
-                else
-                {
-                    if (!monster.isDie())
-                    {
-                        int damage = (int)Math.Ceiling(monster.Atk * (random.NextDouble() * 0.2 + 0.9));
-                        player.Hp -= damage;
-                        if (player.Hp < 0) player.Hp = 0;
-                        Console.WriteLine($"{monster.name} 의 공격! {player.Name}에게 {damage} 데미지!");
-                        Console.ReadLine();
-                    }
-                    playerTurn = true;
-                }
+        //            int damage = (int)Math.Ceiling(player.Atk * (random.NextDouble() * 0.2 + 0.9));
+        //            monster.playergetdamage(player);
+        //            Console.WriteLine($"{player.Name} 의 공격! {monster.name}에게 {damage} 데미지!");
+        //            Console.ReadLine();
+        //            playerTurn = false;
+        //        }
+        //        else
+        //        {
+        //            if (!monster.isDie())
+        //            {
+        //                int damage = (int)Math.Ceiling(monster.Atk * (random.NextDouble() * 0.2 + 0.9));
+        //                player.Hp -= damage;
+        //                if (player.Hp < 0) player.Hp = 0;
+        //                Console.WriteLine($"{monster.name} 의 공격! {player.Name}에게 {damage} 데미지!");
+        //                Console.ReadLine();
+        //            }
+        //            playerTurn = true;
+        //        }
 
-                if (monster.isDie())
-                {
-                    Console.WriteLine("\nVictory! 몬스터 처치 완료.");
-                    Console.ReadLine();
-                    break;
-                }
-                else if (player.Hp <= 0)
-                {
-                    Console.WriteLine("\nYou Lose... 플레이어 사망.");
-                    Console.ReadLine();
-                    break;
-                }
-            }
-            DisplayMainUI();
-        }
+        //        if (monster.isDie())
+        //        {
+        //            Console.WriteLine("\nVictory! 몬스터 처치 완료.");
+        //            Console.ReadLine();
+        //            break;
+        //        }
+        //        else if (player.Hp <= 0)
+        //        {
+        //            Console.WriteLine("\nYou Lose... 플레이어 사망.");
+        //            Console.ReadLine();
+        //            break;
+        //        }
+        //    }
+        //    DisplayMainUI();
+        //}
 
         // 사용자 입력 처리
         int inputCommand(int min, int max)
