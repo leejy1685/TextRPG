@@ -21,8 +21,9 @@ namespace TextRPG
         public int Atk { get; }
         public int Def { get; }
         public int Hp { get; set; }
-
-        public int maxHp { get; set; }
+        public int Mp { get; set; } // MP - 스킬 사용에 필요한 마나
+        public int Maxhp { get; set; } // 최대 hp
+        public int Maxmp { get; set; } // 최대 mp
         public int Gold { get; set; }
 
         public int Exp { get; private set; }
@@ -34,6 +35,8 @@ namespace TextRPG
         public List<Item> Inventory = new List<Item>();
         public Item[] EquipList = new Item[2];
 
+        public Skill[] skillDb; // 스킬 DB
+
         public int InventoryCount
         {
             get
@@ -42,10 +45,11 @@ namespace TextRPG
             }
         }
 
-        public Character(int level, string name, Job job, int gold)
+        public Character(int level, string name, Job job, int mp, int gold)
         {
             Level = level;
             Name = name;
+            Mp = mp; // mp 초기화
             this.job = job;
             switch (this.job)   //직업에 따른 스텟 분배
             {
@@ -67,10 +71,12 @@ namespace TextRPG
                     Hp = 120;
                     break;
             }
-            maxHp = Hp;
+            Maxhp = Hp; // 최대 hp 저장
+            Maxmp = Mp; // 최대 mp 저장
+            Mp = mp;
             Gold = gold;
             Exp = 0;
-            ExpBar = 1;
+            ExpBar = 10;
         }
 
         public void DisplayCharacterInfo()
@@ -161,35 +167,83 @@ namespace TextRPG
             return Inventory.Contains(item);
         }
 
-        public bool LevelUp()
+        public bool LevelUp(Monster monster)
         {
-            Exp++;
-            if(ExpBar == Exp)
+            // 경험치 획득량 계산 : 몬스터들의 레벨을 합친 값
+            int sumExp = monster.level;
+
+            Exp += sumExp; // 경험치 획득
+
+            if(Exp >= ExpBar) // 현재 Exp가 ExpBar 이상일 경우
             {
-                Level++;
-                ExpBar++;
-                Exp = 0;
+                Level++; // 레벨업
+                Exp -= ExpBar; // 레벨업 후 잔존 경험치 계산
+
+                switch(Level) // 레벨업에 따른 ExpBar 증가
+                {
+                    case 2: // 레벨이 2로 올랐을 때
+                        ExpBar = 35; // 2 -> 3을 위한 값
+                        break;
+                    case 3: // 레벨이 3으로 올랐을 때
+                        ExpBar = 65; // 3 -> 4를 위한 값
+                        break;
+                    case 4: // 레벨이 4로 올랐을 때
+                        ExpBar = 100; // 4 -> 5를 위한 값
+                        break;
+                    default: // 레벨이 5이상일 때
+                        ExpBar = 100;
+                        break;
+                }
                 return true;    
             }
             return false;
         }
 
-        public int PlayerGetDamage(int Atk) // 플레이어가 입는 피해 계산
+        public void DisplayBattlePlayerInfo() // 전투 중 플레이어 정보 표시
         {
-            // ## 플레이어가 입을 피해량 계산 ##
-            Random rand = new Random(); // 랜덤 클래스 인스턴스 생성
-
-            // 몬스터 공격력의 최소(0.9) ~ 최대(1.1) 랜덤값 계산
-            double damageRandom = Atk * rand.Next(9, 12) / 10.0f;
-            int GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
-
-            return GetDamage;
-
+            string jobStr = "";
+            switch (job)
+            {
+                case Job.Warrior:
+                    jobStr = "전사";
+                    break;
+                case Job.Thief:
+                    jobStr = "도적";
+                    break;
+                case Job.Barbarian:
+                    jobStr = "바바리안";
+                    break;
+            }
+            Console.WriteLine($"Lv.{Level} {Name} ({jobStr})\nHP {Hp}/{Maxhp}\nMP {Mp}/{Maxmp}");
         }
 
-        public bool isDie()
+        public void SkillSet() // 스킬 목록
         {
-            return Hp <= 0;
+            skillDb = new Skill[]
+            {
+                // 이름, 비용, 공격력 배율, 설명
+                new Skill("알파 스트라이크", 10, 2.0f, $"공격력 * 2 로 하나의 적을 공격합니다."),
+                new Skill("더블 스트라이크", 15, 1.5f, $"공격력 * 1.5 로 적을 랜덤으로 공격합니다.")
+            };
         }
+
+        
+
+        //public void PlayerGetDamage(Monster monster) // 플레이어가 입는 피해 계산
+        //{
+        //    // ## 플레이어가 입을 피해량 계산 ##
+        //    Random rand = new Random(); // 랜덤 클래스 인스턴스 생성
+
+        //    // 몬스터 공격력의 최소(0.9) ~ 최대(1.1) 랜덤값 계산
+        //    // double damageRandom = rand.NextDouble(monster.Atk * 0.9, monster.Atk * 1.1); 
+        //    // int GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
+
+        //    // ## 플레이어 체력 차감 ##
+        //    // Hp -= GetDamage; // 체력에서 데미지 차감
+        //    if (Hp <= 0) // 만약 체력이 0 이하라면
+        //    {
+        //        Hp = 0; // 체력을 0으로 설정 - 사망
+        //    }
+        //}
     }
 }
