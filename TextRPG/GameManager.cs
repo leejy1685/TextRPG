@@ -30,7 +30,7 @@ namespace TextRPG
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
             player = new Character(1, nameCreate(), jobSelect(),50, 1500);
-            monsters = new Monster[3];
+            monsters = new Monster[4];
 
             itemDb = new Item[]
             {
@@ -47,9 +47,9 @@ namespace TextRPG
 
             monstersDb = new Monster[]
             {
-                    new Monster(2, "미니언", 5, 15),
-                    new Monster(3,"공허충",9,10),
-                    new Monster(5,"대포미니언",10,20)
+                    new Monster(2, "미니언", 5, 15,itemDb[4],100),
+                    new Monster(3,"공허충",9,10,itemDb[5],200),
+                    new Monster(5,"대포미니언",10,20,itemDb[6],300)
             };
         }
 
