@@ -681,7 +681,7 @@ namespace TextRPG
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
-            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
             Console.WriteLine();
             Console.WriteLine("[획득 아이템]");
 
