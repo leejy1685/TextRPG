@@ -292,5 +292,11 @@ namespace TextRPG
                 return false;
             }
         }
+
+        public void recoveryMp()
+        {
+            Mp += 10;
+            Mp = Mp >= Maxmp ? Maxmp : Mp;
+        }
     }
 }
