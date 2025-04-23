@@ -69,7 +69,7 @@ namespace TextRPG
 
             int num = rand.Next(1, 101);
 
-            if (num <= 10)
+            if (num <= 100)
                 return item;
             else
                 return null;
@@ -82,7 +82,7 @@ namespace TextRPG
 
             int num = rand.Next(1, 101);
 
-            if (num <= 50)
+            if (num <= 100)
                 return gold;
             else
                 return 0;

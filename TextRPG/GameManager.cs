@@ -170,6 +170,7 @@ namespace TextRPG
                     DisplayShopUI();//상점 열기
                     break;
                 case 4:
+                    player.beforeHpSave();
                     monsters = createMonsters();
                     DisplayBattleUI();//던전 열기
                     break;
@@ -713,6 +714,8 @@ namespace TextRPG
             //하는 것을 막기 위해서 턴 종료 시점에 회복
             player.recoveryMp();
 
+            int totalGetGold = 0; // 총합 획득 골드
+
             Console.Clear();
             Console.WriteLine("Battle!! - Result\n");
             Console.WriteLine("Victory");
@@ -720,7 +723,33 @@ namespace TextRPG
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
-            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
+            Console.WriteLine();
+            Console.WriteLine("[획득 아이템]");
+
+            for (int i = 0; i < monsters.Length; i++) // 골드 드롭 여부 체크
+            {
+                if (monsters[i].goldDrop() != 0) // 골드가 드롭됐을 경우
+                {
+                    totalGetGold += monsters[i].goldDrop(); // 총합 드롭 골드에 더하기
+                }
+            }
+
+            if (totalGetGold != 0) // 드롭 골드가 0이 아니라면
+            {
+                Console.WriteLine($"{totalGetGold} Gold");
+                player.Gold += totalGetGold; // 골드 획득
+            }
+
+            for (int i = 0; i < monsters.Length; i++) // 아이템 드롭 여부 체크
+            {
+                if (monsters[i].dropItem() != null) // 아이템이 드롭됐을 경우
+                {
+                    Console.WriteLine($"{monsters[i].item.Name} - 1"); // 아이템 획득 메시지
+                    player.Inventory.Add(monsters[i].item); // 아이템을 인벤토리에 추가
+                }
+            }
+
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
