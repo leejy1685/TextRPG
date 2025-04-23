@@ -29,9 +29,9 @@ namespace TextRPG
             return damage;
         }
 
-        public string skillInfo() // 스킬 설명
+        public void skillInfo() // 스킬 설명
         {
-            return Desc;
+            Console.WriteLine($"{Name} MP - {CostMP}\n   {Desc}");
         }
     }
 
