@@ -21,19 +21,29 @@ namespace TextRPG
             this.name = name;
             this.Atk = atk;
             this.Hp = hp;
-        }
-
-        public int MonsterGetDamage(int Atk) // 플레이어가 입는 피해 계산
+        }        
+        public int MonsterDamage() //플에이어에게 가하는 피해 계산
         {
             Random random = new Random();
 
             float damagerandom = Atk * random.Next(9, 12) / 10.0f;
-            int getdamage = (int)Math.Ceiling(damagerandom); // 랜덤값 올림 처리
+            int damage = (int)Math.Ceiling(damagerandom); // 랜덤값 올림 처리
 
-            //김종보 오류 개선 방안 : 체력 감소 처리 추가
-            Hp = Math.Max(0, Hp - getdamage);
+            return damage;
+        }
 
-            return getdamage;
+        public bool isCrit() // 치명타 발동 여부 체크
+        {
+            Random random = new Random(); // 랜덤 클래스 인스턴스 생성
+            int critCheck = random.Next(1, 101);
+            if (critCheck <= 15) // 치명타 발생 : 랜덤값이 1 ~ 15
+            {
+                return true;
+            }
+            else // 치명타 미발생 : 랜덤값이 16 ~ 100
+            {
+                return false;
+            }
         }
 
         public bool isDie()

@@ -484,33 +484,28 @@ namespace TextRPG
             Console.Clear();
             Console.WriteLine("Battle!!\n");
 
-            /* Console.WriteLine($"{player.Name}의 공격!");
-             Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. " +
-                 $"[대미지 : {monsters[targetMonster].MonsterGetDamage(player.Atk)}]");
-             Console.WriteLine();
-             Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} ");
-
-             int monsterHp = monsters[targetMonster].Hp - monsters[targetMonster].MonsterGetDamage(player.Atk);
-             //MonsterGetDamage()함수가 이미 대미지를 리턴, 같은 값을 Console.WriteLine()에도 사용하여 HP에 즉시 반영
-             //오류분석 : MonsterGetDamage() 내에서 이미 HP를 줄이고 있을 가능성이 있음
-             //           중복 감산 가능성 있음
-
-             Console.WriteLine("HP {0} -> {1}", monsters[targetMonster].Hp, monsterHp <= 0 ? "Dead" : monsterHp);
-            */
-            //김종보 오류 개선 방안 : MonsterGetDamage 안에서 Hp감소, damage는 단순 출력용으로 재사용
-            int damage = monsters[targetMonster].MonsterGetDamage(player.Atk + player.ExtraAtk);
-
-            Console.WriteLine($"{player.Name}의 공격!");
-            Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. [대미지 : {damage}]");
-
-            int hpBefore = monsters[targetMonster].Hp + damage;
+            // 1. 치명타 여부 판단
+            bool isCritical = player.isCrit();
+            // 2. 기본 데미지 계산 (치명타 포함)
+            int baseDamage = player.PlayerDamage();
+            if (isCritical)
+            {
+                baseDamage = (int)(baseDamage * 1.6f); // 치명타일 경우 1.6배
+            }
+            // 3. 체력 변화 전 상태 저장
+            int hpBefore = monsters[targetMonster].Hp;
+            // 4. 데미지 적용
+            monsters[targetMonster].Hp = Math.Max(0, monsters[targetMonster].Hp - baseDamage);
             string hpAfter = monsters[targetMonster].isDie() ? "Dead" : monsters[targetMonster].Hp.ToString();
+            // 5. 출력
+            Console.WriteLine($"{player.Name}의 공격!");
+            Console.WriteLine($"Lv.{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. [대미지 : {baseDamage}]" +
+                              (isCritical ? " - 치명타 공격!!" : ""));
 
+            Console.WriteLine();
+            Console.WriteLine($"Lv.{monsters[targetMonster].level} {monsters[targetMonster].name}");
             Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
-
-            //대미지 입히는거 계산
-            //monsters[targetMonster].Hp = monsterHp;
-
+            Console.WriteLine();
             Console.WriteLine("0. 다음");
 
             int command = inputCommand(0, 0);
@@ -529,6 +524,7 @@ namespace TextRPG
                     else
                         DisplayEnemyPhaseUI();
                     break;
+                    
             }
 
         }
@@ -542,44 +538,23 @@ namespace TextRPG
                     Console.Clear();
                     Console.WriteLine("Battle!!\n");
 
-                    /*Console.WriteLine($"Lv.{monster.level} {monster.name} 의 공격!");
-                    Console.WriteLine($"{player.Name} 을(를) 맞췄습니다. [데미지 : {player.PlayerGetDamage(monster.Atk)}]");
-                    Console.WriteLine();
-                    Console.WriteLine($"Lv.{player.Level} {player.Name}");
-                    Console.WriteLine($"HP {player.Hp} -> {player.Hp - player.PlayerGetDamage(monster.Atk)}");*/
-                    //PlayerGetDamage()가 몇 번 호출되느냐에 따라 HP감소가 다름
-                    //그렇다면 대미지를 한 번만 계산해서 변수에 저장하고, 표시 및 HP 적용을 해당 변수에 그 값만 사용하도록 변경?
-                    //김종보 오류 개선 방안 :
-                    int damage = player.PlayerGetDamage(monster.Atk);
+                    int damage = monster.MonsterDamage(); //몬스터 고유 데미지
+                    int hpBefore = player.Hp; //플레이어 피해전 체력
+                    player.Hp = Math.Max(0, player.Hp - damage); // 체력 감소처리
+                    int hpAfter = player.Hp;
 
+                    // 4. 출력
                     Console.WriteLine($"Lv.{monster.level} {monster.name}의 공격!");
                     Console.WriteLine($"{player.Name}을(를) 맞췄습니다. [대미지: {damage}]");
                     Console.WriteLine();
                     Console.WriteLine($"Lv.{player.Level} {player.Name}");
-                    Console.WriteLine($"HP {player.Hp + damage} -> {player.Hp}"); // 데미지 이전 체력 -> 이후 체력
+                    Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
 
-                    // player.Hp -= player.PlayerGetDamage(monster.Atk);
-
-                    Console.WriteLine("0. 다음\n");
-                    Console.WriteLine("대상을 선택해주세요.");
+                    Console.WriteLine();
+                    Console.WriteLine("0. 다음");
 
                     int command = inputCommand(0, 0);
-
-                    /* switch (command)
-                     {
-                         case 0:
-                             if (player.isDie())
-                             {
-                                 DisplayLoseUI();
-                                 return;  // 사망 시 바로 종료
-                             }
-                             break;
-                     }                     
-                     if (!player.isDie())
-                     {
-                         DisplayAttackUI();
-                     }*/
-
+                                       
                     if (player.isDie())
                     {
                         DisplayLoseUI();
