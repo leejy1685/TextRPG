@@ -14,7 +14,7 @@ namespace TextRPG
         static void Main(string[] args)
         {
             //저장 데이터 로드 후 실행
-            GameManager gameManager = new GameManager();
+            GameManager2 gameManager = new GameManager2();
             //gameManager.loadData();
             gameManager.SetData();
             gameManager.DisplayMainUI();
