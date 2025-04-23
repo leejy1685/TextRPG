@@ -420,27 +420,32 @@ namespace TextRPG
             //몬스터 정보 표시되는 함수
             foreach (Monster monster in monsters)
             {
+                if (monster.isDie()) Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine(monster.monsterInfo());
+                if (monster.isDie()) Console.ResetColor();
             }
             Console.WriteLine();
-            Console.WriteLine("[내정보]");
-            player.DisplayBattlePlayerInfo();
             Console.WriteLine();
+            Console.WriteLine("[내정보]");
 
-            Console.WriteLine("1. 알파 스트라이크");
-            Console.WriteLine("2. 더블 스트라이크");
+            player.DisplayBattlePlayerInfo();
+
+            Console.WriteLine();
+            Console.WriteLine("1. 공격");
+            Console.WriteLine("2. 스킬");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
-            int command = inputCommand(1, 2);
+            int command = inputCommand(1, 1);
 
             switch (command)
             {
                 case 1:
-                    AlphaStrike(command);
-                    //DisplayAttackUI(false);
+                    DisplayAttackUI(false);
                     break;
                 case 2:
-                    DoubleStrike(command);
+                    //스킬 UI는 미구현으로 스킬은 아직 봉인
+                    //AlphaStrike(command);
+                    //DoubleStrike(command);
                     break;
 
             }
@@ -457,15 +462,19 @@ namespace TextRPG
 
             //몬스터 정보 표시되는 함수
             for (int i = 0; i < monsters.Length; i++) {
+                if (monsters[i].isDie()) Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine($"{i + 1} {monsters[i].monsterInfo()}");
+                if (monsters[i].isDie()) Console.ResetColor();
             }
 
             Console.WriteLine();
             Console.WriteLine("[내정보]");
+            player.DisplayBattlePlayerInfo();
 
             // 캐릭터 정보
             Console.WriteLine();
             Console.WriteLine("0. 취소");
+            Console.WriteLine();
             Console.WriteLine("대상을 선택해주세요.");
 
             int command = inputCommand(0, monsters.Length);
@@ -477,13 +486,21 @@ namespace TextRPG
                     break;
                 default:
                     int targetMonster = command - 1;
-                    if(skill)
-                        return targetMonster;
-                    DisplayMonsterDamageUI(targetMonster);
+                    if (monsters[targetMonster].isDie())
+                    {   //이미 죽은 몬스터를 공격 지정 할 때
+                        Console.WriteLine("이미 죽은 몬스터 입니다.");
+                        DisplayAttackUI(false);
+                    }
+                    else
+                    {
+                        if (skill)  //현재 공격이 스킬 일 때
+                            return targetMonster;
+                        //일반 공격 UI
+                        DisplayMonsterDamageUI(targetMonster);
+                    }
+                    
+                    DisplayEnemyPhaseUI();
                     break;
-
-
-
             }
             return -1;
         }
@@ -493,19 +510,18 @@ namespace TextRPG
             Console.Clear();
             Console.WriteLine("Battle!!\n");
 
+            int damage = player.PlayerDamage();
+
             Console.WriteLine($"{player.Name}의 공격!");
-            Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. " +
-                $"[대미지 : {player.PlayerDamage()}]");
+            Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. [대미지 : {damage}]");
             Console.WriteLine();
-            Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} ");
 
-            int monsterHp = monsters[targetMonster].Hp - player.PlayerDamage();
+            monsters[targetMonster].Hp -= damage;
+            int hpBefore = monsters[targetMonster].Hp + damage;
+            string hpAfter = monsters[targetMonster].isDie() ? "Dead" : monsters[targetMonster].Hp.ToString();
 
-            Console.WriteLine("HP {0} -> {1}", monsters[targetMonster].Hp, monsterHp<=0? "Dead": monsterHp);
-
-            //대미지 입히는거 계산
-            monsters[targetMonster].Hp = monsterHp;
-
+            Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
+            Console.WriteLine();
             Console.WriteLine("0. 다음");
 
             int command = inputCommand(0, 0);
@@ -514,15 +530,13 @@ namespace TextRPG
             {
                 case 0:
                     int aliveMon = monsters.Length;
-                    foreach(Monster monster in monsters)
+                    foreach (Monster monster in monsters)
                     {
                         if (monster.isDie())
                             aliveMon--;
                     }
                     if (aliveMon == 0)
                         DisplayVictoryUI();
-                    
-                    DisplayEnemyPhaseUI();
                     break;
             }
 
@@ -571,44 +585,50 @@ namespace TextRPG
 
         void DisplayEnemyPhaseUI()
         {
-            foreach (Monster monster in monsters) 
+            //캐릭터 마나 회복, 캐릭터가 여러번 마나회복을
+            //하는 것을 막기 위해서 턴 종료 시점에 회복
+            player.recoveryMp();
+
+            foreach (Monster monster in monsters)
             {
                 if (!monster.isDie())
                 {
                     Console.Clear();
                     Console.WriteLine("Battle!!\n");
 
-                    Console.WriteLine($"Lv.{monster.level} {monster.name} 의 공격!");
-                    Console.WriteLine($"{player.Name} 을(를) 맞췄습니다. [데미지 : {monster.MonsterDamage()}]");
+                    int damage = monster.MonsterDamage();
+                    player.Hp -= damage;
+
+                    Console.WriteLine($"Lv.{monster.level} {monster.name}의 공격!");
+                    Console.WriteLine($"{player.Name}을(를) 맞췄습니다. [대미지: {damage}]");
                     Console.WriteLine();
                     Console.WriteLine($"Lv.{player.Level} {player.Name}");
-                    Console.WriteLine($"HP {player.Hp} -> {player.Hp - monster.MonsterDamage()}");
+                    Console.WriteLine($"HP {player.Hp + damage} -> {player.Hp}"); // 데미지 이전 체력 -> 이후 체력
 
-                    player.Hp -= monster.MonsterDamage();
-
+                    Console.WriteLine();
                     Console.WriteLine("0. 다음\n");
                     Console.WriteLine("대상을 선택해주세요.");
 
                     int command = inputCommand(0, 0);
 
-                    switch (command)
+                    if (player.isDie())
                     {
-                        case 0:
-                            if (player.isDie())
-                                DisplayLoseUI();
-                            else
-                                DisplayBattleUI();
-                            break;
+                        DisplayLoseUI();
+                        return;
                     }
-
-
                 }
             }
+            // 모든 몬스터(살아있는 기준)가 공격 후 다시 공격 기회
+            DisplayBattleUI();
         }
 
 
         void DisplayVictoryUI()
         {
+            //캐릭터 마나 회복, 캐릭터가 여러번 마나회복을
+            //하는 것을 막기 위해서 턴 종료 시점에 회복
+            player.recoveryMp();
+
             Console.Clear();
             Console.WriteLine("Battle!! - Result\n");
             Console.WriteLine("Victory");
@@ -708,6 +728,7 @@ namespace TextRPG
 
         void AlphaStrike(int skillNum)
         {
+            player.Mp -= 10;
             int target = DisplayAttackUI(true);
             int skill = skillNum - 1;
             DisplaySkillDamageUI(target, skill);
@@ -716,6 +737,7 @@ namespace TextRPG
 
         void DoubleStrike(int skillNum)
         {
+            player.Mp -= 15;
             int skill = skillNum - 1;
 
             Random random = new Random();
