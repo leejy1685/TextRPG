@@ -24,6 +24,7 @@ namespace TextRPG
         public int Mp { get; set; } // MP - 스킬 사용에 필요한 마나
         public int Maxhp { get; set; } // 최대 hp
         public int Maxmp { get; set; } // 최대 mp
+        public int Beforehp { get; set; } // 전투 시작 시점의 hp
         public int Gold { get; set; }
 
         public int Exp { get; private set; }

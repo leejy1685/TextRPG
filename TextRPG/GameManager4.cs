@@ -431,6 +431,8 @@ namespace TextRPG
             Console.WriteLine("2. 더블 스트라이크");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
+            player.Beforehp = player.Hp; // 전투 시작 시점의 체력 저장
+
             int command = inputCommand(1, 2);
 
             switch (command)
@@ -625,7 +627,7 @@ namespace TextRPG
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
-            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
@@ -647,7 +649,7 @@ namespace TextRPG
             Console.WriteLine("You Lose");
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
-            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
@@ -685,7 +687,7 @@ namespace TextRPG
                     if (player.Gold >= 500)
                     {
                         player.Gold -= 500;
-                        player.Hp = 100;
+                        player.Hp = player.Maxhp; // 최대 체력으로 회복
                         Console.WriteLine("휴식을 완료했습니다.");
                     }
                     else
