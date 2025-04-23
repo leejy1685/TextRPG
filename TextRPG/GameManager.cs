@@ -17,6 +17,7 @@ namespace TextRPG
         private Character player;
         private Item[] itemDb;
         private Dungeon[] dungeons;
+        Monster[] monstersDb;
         Monster[] monsters;
 
         private Random random;
@@ -44,12 +45,30 @@ namespace TextRPG
             };
 
 
-            monsters = new Monster[]
+            monstersDb = new Monster[]
             {
                     new Monster(2, "미니언", 5, 15),
                     new Monster(3,"공허충",9,10),
                     new Monster(5,"대포미니언",10,20)
             };
+        }
+
+        public Monster[] createMonsters()
+        {
+            Random random = new Random();
+
+            // 1마리에서 4마리까지 랜덤 생성
+            int numberOfMonsters = random.Next(1, 5);
+            Monster[] monsters = new Monster[numberOfMonsters];
+
+            // 랜덤으로 몬스터 선택하여 배열에 추가
+            for (int i = 0; i < numberOfMonsters; i++)
+            {
+                int randomIndex = random.Next(monstersDb.Length);
+                monsters[i] = monstersDb[randomIndex];
+            }
+
+            return monsters;
         }
 
         //플레이어 캐릭터의 이름을 만드는 메서드
@@ -148,6 +167,7 @@ namespace TextRPG
                     DisplayShopUI();//상점 열기
                     break;
                 case 4:
+                    monsters = createMonsters();
                     DisplayBattleUI();//던전 열기
                     break;
                 case 5:
