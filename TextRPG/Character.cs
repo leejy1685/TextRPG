@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -78,7 +77,6 @@ namespace TextRPG
             Gold = gold;
             Exp = 0;
             ExpBar = 10;
-            SkillSet();
         }
 
         public void DisplayCharacterInfo()
@@ -104,7 +102,7 @@ namespace TextRPG
             Console.WriteLine($"Gold : {Gold} G");
         }
 
-        public void DisplayInventory(bool showIdx,bool showPrice)
+        public void DisplayInventory(bool showIdx, bool showPrice)
         {
             for (int i = 0; i < Inventory.Count; i++)
             {
@@ -141,7 +139,7 @@ namespace TextRPG
                 }
                 else
                 {
-                    EquipList[item.Type] =item;
+                    EquipList[item.Type] = item;
                     ExtraDef += item.Value;
                 }
             }
@@ -160,7 +158,7 @@ namespace TextRPG
 
         public void SellItem(Item item)
         {
-            Gold += item.Price/100*85;
+            Gold += item.Price / 100 * 85;
             Inventory.Remove(item);
         }
 
@@ -176,12 +174,12 @@ namespace TextRPG
 
             Exp += sumExp; // 경험치 획득
 
-            if(Exp >= ExpBar) // 현재 Exp가 ExpBar 이상일 경우
+            if (Exp >= ExpBar) // 현재 Exp가 ExpBar 이상일 경우
             {
                 Level++; // 레벨업
                 Exp -= ExpBar; // 레벨업 후 잔존 경험치 계산
 
-                switch(Level) // 레벨업에 따른 ExpBar 증가
+                switch (Level) // 레벨업에 따른 ExpBar 증가
                 {
                     case 2: // 레벨이 2로 올랐을 때
                         ExpBar = 35; // 2 -> 3을 위한 값
@@ -196,7 +194,7 @@ namespace TextRPG
                         ExpBar = 100;
                         break;
                 }
-                return true;    
+                return true;
             }
             return false;
         }
@@ -229,22 +227,63 @@ namespace TextRPG
             };
         }
 
-        public bool isDie()
+        public int PlayerDamage() // 몬스터가 입을 피해량 계산 (일반공격)
         {
-            return Hp <= 0;
+            float damageRandom; // 1차적으로 계산된 데미지 (실수)
+            int GetDamage; // 소숫점 이하 올림 처리된 데미지
+
+            // ## 플레이어측이 몬스터에게 가할 피해량 계산 ##
+            Random random = new Random(); // 랜덤 클래스 인스턴스 생성
+
+            // 플레이어 공격력 * 최소(0.9) ~ 최대(1.1) 랜덤값 계산
+            damageRandom = Atk * random.Next(9, 12) / 10.0f;
+
+            GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
+
+            return GetDamage; // 데미지 return
         }
 
-        public int PlayerDamage() // 플레이어가 입히는 피해
+        public int PlayerDamage(float skillValue) // 몬스터가 입을 피해량 계산 (스킬공격)
         {
-            return Atk;
+            float damageRandom; // 1차적으로 계산된 데미지 (실수)
+            int GetDamage; // 소숫점 이하 올림 처리된 데미지
+
+            // ## 플레이어측이 몬스터에게 가할 피해량 계산 ##
+            Random random = new Random(); // 랜덤 클래스 인스턴스 생성
+
+            // 플레이어 공격력 * 스킬 배율 * 최소(0.9) ~ 최대(1.1) 랜덤값 계산
+            damageRandom = Atk * skillValue * random.Next(9, 12) / 10.0f;
+
+            GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
+
+            return GetDamage; // 데미지 return
         }
 
-        public int PlayerDamage(float value) // 플레이어가 입히는 피해
+        public bool isCrit() // 치명타 발동 여부 체크
         {
-            int GetDamage = (int)value * Atk;
+            Random random = new Random(); // 랜덤 클래스 인스턴스 생성
+            int critCheck = random.Next(1, 101);
+            if(critCheck <= 15) // 치명타 발생 : 랜덤값이 1 ~ 15
+            {
+                return true;
+            }
+            else // 치명타 미발생 : 랜덤값이 16 ~ 100
+            {
+                return false;
+            }
+        }
 
-            return GetDamage;
-            
+        public bool isDie() // 플레이어 사망 여부 체크
+        {
+            if (Hp <= 0)
+            {
+                Hp = 0;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
