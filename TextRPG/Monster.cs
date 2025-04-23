@@ -28,6 +28,16 @@ namespace TextRPG
             this.gold = gold;
         }
 
+        public Monster(Monster other) 
+        {
+            this.level = other.level;
+            this.name = other.name;
+            this.Atk = other.Atk;
+            this.Hp = other.Hp;
+            this.item = other.item;
+            this.gold = other.gold;
+        }
+
         public int MonsterDamage() //플에이어에게 가하는 피해 계산
         {
             Random random = new Random();

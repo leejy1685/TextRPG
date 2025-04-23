@@ -67,8 +67,7 @@ namespace TextRPG
             for (int i = 0; i < numberOfMonsters; i++)
             {
                 int randomIndex = random.Next(monstersDb.Length);
-                Monster mon = monstersDb[randomIndex];
-                monsters[i] = new Monster(mon.level, mon.name, mon.Atk, mon.Hp, mon.item, mon.gold);
+                monsters[i] = new Monster(monstersDb[randomIndex]);
             }
 
             return monsters;
