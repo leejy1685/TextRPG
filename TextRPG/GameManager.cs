@@ -577,16 +577,26 @@ namespace TextRPG
             Console.Clear();
             Console.WriteLine("Battle!!\n");
 
-            int damage = player.PlayerDamage();
-
-            Console.WriteLine($"{player.Name}의 공격!");
-            Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. [대미지 : {damage}]");
-            Console.WriteLine();
-
-            monsters[targetMonster].Hp -= damage;
-            int hpBefore = monsters[targetMonster].Hp + damage;
+            // 1. 치명타 여부 판단
+            bool isCritical = player.isCrit();
+            // 2. 기본 데미지 계산 (치명타 포함)
+            int baseDamage = player.PlayerDamage();
+            if (isCritical)
+            {
+                baseDamage = (int)(baseDamage * 1.6f); // 치명타일 경우 1.6배
+            }
+            // 3. 체력 변화 전 상태 저장
+            int hpBefore = monsters[targetMonster].Hp;
+            // 4. 데미지 적용
+            monsters[targetMonster].Hp = Math.Max(0, monsters[targetMonster].Hp - baseDamage);
             string hpAfter = monsters[targetMonster].isDie() ? "Dead" : monsters[targetMonster].Hp.ToString();
+            // 5. 출력
+            Console.WriteLine($"{player.Name}의 공격!");
+            Console.WriteLine($"Lv.{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. [대미지 : {baseDamage}]" +
+                              (isCritical ? " - 치명타 공격!!" : ""));
 
+            Console.WriteLine();
+            Console.WriteLine($"Lv.{monsters[targetMonster].level} {monsters[targetMonster].name}");
             Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
             Console.WriteLine();
             Console.WriteLine("0. 다음");
@@ -604,7 +614,10 @@ namespace TextRPG
                     }
                     if (aliveMon == 0)
                         DisplayVictoryUI();
+                    else
+                        DisplayEnemyPhaseUI();
                     break;
+
             }
 
         }
@@ -665,18 +678,20 @@ namespace TextRPG
                     Console.Clear();
                     Console.WriteLine("Battle!!\n");
 
-                    int damage = monster.MonsterDamage();
-                    player.Hp -= damage;
+                    int damage = monster.MonsterDamage(); //몬스터 고유 데미지
+                    int hpBefore = player.Hp; //플레이어 피해전 체력
+                    player.Hp = Math.Max(0, player.Hp - damage); // 체력 감소처리
+                    int hpAfter = player.Hp;
 
+                    // 4. 출력
                     Console.WriteLine($"Lv.{monster.level} {monster.name}의 공격!");
                     Console.WriteLine($"{player.Name}을(를) 맞췄습니다. [대미지: {damage}]");
                     Console.WriteLine();
                     Console.WriteLine($"Lv.{player.Level} {player.Name}");
-                    Console.WriteLine($"HP {player.Hp + damage} -> {player.Hp}"); // 데미지 이전 체력 -> 이후 체력
+                    Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
 
                     Console.WriteLine();
-                    Console.WriteLine("0. 다음\n");
-                    Console.WriteLine("대상을 선택해주세요.");
+                    Console.WriteLine("0. 다음");
 
                     int command = inputCommand(0, 0);
 
