@@ -148,6 +148,7 @@ namespace TextRPG
                     DisplayShopUI();//상점 열기
                     break;
                 case 4:
+                    player.beforeHpSave(); // 전투 시작 시점 hp 저장
                     DisplayBattleUI();//던전 열기
                     break;
                 case 5:
@@ -431,8 +432,6 @@ namespace TextRPG
             Console.WriteLine("2. 더블 스트라이크");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
-            player.Beforehp = player.Hp; // 전투 시작 시점의 체력 저장
-
             int command = inputCommand(1, 2);
 
             switch (command)
@@ -449,6 +448,54 @@ namespace TextRPG
 
 
         }
+
+        void DisplaySkillUI() // 전투 - 스킬 목록 확인
+        {
+            Console.Clear();
+            Console.WriteLine("Battle!!\n");
+
+            //몬스터 생성되는 함수
+
+            //몬스터 정보 표시되는 함수
+            foreach (Monster monster in monsters)
+            {
+                Console.WriteLine(monster.monsterInfo());
+            }
+            Console.WriteLine();
+            Console.WriteLine("[내정보]");
+            player.DisplayBattlePlayerInfo();
+            Console.WriteLine();
+
+            //스킬 목록 출력
+            for (int i = 0; i < player.skillDb.Length; i++)
+            {
+                Console.Write($"{i + 1}. ");
+                player.skillDb[i].skillInfo();
+            }
+
+            Console.WriteLine("0. 취소");
+            Console.WriteLine();
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+
+            int command = inputCommand(0, 2);
+
+            switch (command)
+            {
+                case 0:
+                    DisplayBattleUI(); // 공격 or 스킬 선택 화면으로 돌아가기
+                    break;
+                case 1:
+                    AlphaStrike(command);
+                    //DisplayAttackUI(false);
+                    break;
+                case 2:
+                    DoubleStrike(command);
+                    break;
+
+            }
+        }
+
+
 
         int DisplayAttackUI(bool skill)
         {

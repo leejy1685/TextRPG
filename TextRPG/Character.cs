@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -272,6 +273,11 @@ namespace TextRPG
             {
                 return false;
             }
+        }
+
+        public void beforeHpSave()
+        {
+            Beforehp = Hp; // 전투 시작 시점의 체력 저장
         }
 
         public bool isDie() // 플레이어 사망 여부 체크
