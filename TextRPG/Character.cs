@@ -78,6 +78,7 @@ namespace TextRPG
             Gold = gold;
             Exp = 0;
             ExpBar = 10;
+            SkillSet();
         }
 
         public void DisplayCharacterInfo()
@@ -233,16 +234,14 @@ namespace TextRPG
             return Hp <= 0;
         }
 
-
-
-        public int PlayerGetDamage(int atk) // 플레이어가 입는 피해 계산
+        public int PlayerDamage() // 플레이어가 입히는 피해
         {
-            // ## 플레이어가 입을 피해량 계산 ##
-            Random rand = new Random(); // 랜덤 클래스 인스턴스 생성
+            return Atk;
+        }
 
-            // 몬스터 공격력의 최소(0.9) ~ 최대(1.1) 랜덤값 계산
-            double damageRandom = atk * rand.Next( 9, 12)/10.0f;
-            int GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
+        public int PlayerDamage(float value) // 플레이어가 입히는 피해
+        {
+            int GetDamage = (int)value * Atk;
 
             return GetDamage;
             

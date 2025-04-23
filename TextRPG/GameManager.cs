@@ -427,22 +427,28 @@ namespace TextRPG
             player.DisplayBattlePlayerInfo();
             Console.WriteLine();
 
-            Console.WriteLine("1. 공격");
+            Console.WriteLine("1. 알파 스트라이크");
+            Console.WriteLine("2. 더블 스트라이크");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
-            int command = inputCommand(1, 1);
+            int command = inputCommand(1, 2);
 
             switch (command)
             {
                 case 1:
-                    DisplayAttackUI();
+                    AlphaStrike(command);
+                    //DisplayAttackUI(false);
                     break;
+                case 2:
+                    DoubleStrike(command);
+                    break;
+
             }
 
 
         }
 
-        void DisplayAttackUI()
+        int DisplayAttackUI(bool skill)
         {
             Console.Clear();
             Console.WriteLine("Battle!!\n");
@@ -471,12 +477,15 @@ namespace TextRPG
                     break;
                 default:
                     int targetMonster = command - 1;
+                    if(skill)
+                        return targetMonster;
                     DisplayMonsterDamageUI(targetMonster);
                     break;
 
 
 
             }
+            return -1;
         }
 
         void DisplayMonsterDamageUI(int targetMonster)
@@ -486,13 +495,13 @@ namespace TextRPG
 
             Console.WriteLine($"{player.Name}의 공격!");
             Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. " +
-                $"[대미지 : {monsters[targetMonster].MonsterGetDamage(player.Atk)}]");
+                $"[대미지 : {player.PlayerDamage()}]");
             Console.WriteLine();
             Console.WriteLine($"Lv{monsters[targetMonster].level} {monsters[targetMonster].name} ");
 
-            int monsterHp = monsters[targetMonster].Hp - monsters[targetMonster].MonsterGetDamage(player.Atk);
+            int monsterHp = monsters[targetMonster].Hp - player.PlayerDamage();
 
-            Console.WriteLine("HP {0} -> {1}", monsters[targetMonster].Hp, monsters[targetMonster].isDie() ? "Dead": monsterHp);
+            Console.WriteLine("HP {0} -> {1}", monsters[targetMonster].Hp, monsterHp<=0? "Dead": monsterHp);
 
             //대미지 입히는거 계산
             monsters[targetMonster].Hp = monsterHp;
@@ -519,6 +528,47 @@ namespace TextRPG
 
         }
 
+        void DisplaySkillDamageUI(int target,int skillNum)
+        {
+            Console.Clear();
+            Console.WriteLine("Battle!!\n");
+
+            Console.WriteLine($"{player.Name}의 공격!");
+            Console.WriteLine($"Lv{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. " +
+                $"[대미지 : {player.PlayerDamage(player.skillDb[skillNum].Value)}]");
+            Console.WriteLine();
+            Console.WriteLine($"Lv{monsters[target].level} {monsters[target].name} ");
+
+            int monsterHp = monsters[target].Hp - player.PlayerDamage(player.skillDb[skillNum].Value);
+
+            Console.WriteLine("HP {0} -> {1}", monsters[target].Hp, monsterHp <= 0 ? "Dead" : monsterHp);
+
+            //대미지 입히는거 계산
+            monsters[target].Hp = monsterHp;
+
+            Console.WriteLine("0. 다음");
+
+            int command = inputCommand(0, 0);
+
+            switch (command)
+            {
+                case 0:
+                    int aliveMon = monsters.Length;
+                    foreach (Monster monster in monsters)
+                    {
+                        if (monster.isDie())
+                            aliveMon--;
+                    }
+                    if (aliveMon == 0)
+                        DisplayVictoryUI();
+                    
+
+                    break;
+            }
+
+        }
+
+
         void DisplayEnemyPhaseUI()
         {
             foreach (Monster monster in monsters) 
@@ -529,12 +579,12 @@ namespace TextRPG
                     Console.WriteLine("Battle!!\n");
 
                     Console.WriteLine($"Lv.{monster.level} {monster.name} 의 공격!");
-                    Console.WriteLine($"{player.Name} 을(를) 맞췄습니다. [데미지 : {player.PlayerGetDamage(monster.Atk)}]");
+                    Console.WriteLine($"{player.Name} 을(를) 맞췄습니다. [데미지 : {monster.MonsterDamage()}]");
                     Console.WriteLine();
                     Console.WriteLine($"Lv.{player.Level} {player.Name}");
-                    Console.WriteLine($"HP {player.Hp} -> {player.Hp - player.PlayerGetDamage(monster.Atk)}");
+                    Console.WriteLine($"HP {player.Hp} -> {player.Hp - monster.MonsterDamage()}");
 
-                    player.Hp -= player.PlayerGetDamage(monster.Atk);
+                    player.Hp -= monster.MonsterDamage();
 
                     Console.WriteLine("0. 다음\n");
                     Console.WriteLine("대상을 선택해주세요.");
@@ -546,9 +596,8 @@ namespace TextRPG
                         case 0:
                             if (player.isDie())
                                 DisplayLoseUI();
-                        
-                            if (monster == monsters[monsters.Length - 1])
-                                DisplayAttackUI();
+                            else
+                                DisplayBattleUI();
                             break;
                     }
 
@@ -657,6 +706,37 @@ namespace TextRPG
             }
         }
 
-       
+        void AlphaStrike(int skillNum)
+        {
+            int target = DisplayAttackUI(true);
+            int skill = skillNum - 1;
+            DisplaySkillDamageUI(target, skill);
+            DisplayEnemyPhaseUI();
+        }
+
+        void DoubleStrike(int skillNum)
+        {
+            int skill = skillNum - 1;
+
+            Random random = new Random();
+
+            int target = random.Next(monsters.Length);
+            while (monsters[target].isDie())
+            {
+                target = random.Next(monsters.Length);
+            }
+            DisplaySkillDamageUI(target, skill);
+
+            target = random.Next(monsters.Length);
+            while (monsters[target].isDie())
+            {
+                target = random.Next(monsters.Length);
+            }
+            DisplaySkillDamageUI(target, skill);
+            DisplayEnemyPhaseUI();
+        }
+
+
+
     }
 }

@@ -23,32 +23,38 @@ namespace TextRPG
             this.Hp = hp;
         }
 
-        public int MonsterGetDamage(int Atk) // 플레이어가 입는 피해 계산
+        public int MonsterDamage() //플에이어에게 가하는 피해 계산
         {
             Random random = new Random();
 
             float damagerandom = Atk * random.Next(9, 12)/10.0f;
-            int getdamage = (int)Math.Ceiling(damagerandom); // 랜덤값 올림 처리
+            int damage = (int)Math.Ceiling(damagerandom); // 랜덤값 올림 처리
 
-            return getdamage;
+            return damage;
         }
 
+        //몬스터의 생존 여부
         public bool isDie()
         {
-            if (Hp <= 0)
-                return true;
-            return false;
+            return Hp <= 0;
         }
 
+        //현재 몬스터 정보 출력
         public string monsterInfo()
         {
-            string alive;
-            if (isDie())
-                alive = "Dead";
-            else
-                alive = Hp.ToString();
+            string alive = isDie() ? "Dead" : Hp.ToString();
 
            return $"Lv.{level} {name} HP {alive}";
+        }
+
+        //몬스터 회피 확률 계산
+        public bool isEvasion()
+        {
+            Random rand = new Random();
+
+            int num = rand.Next(1,101);
+
+            return num <= 10;
         }
 
     }
