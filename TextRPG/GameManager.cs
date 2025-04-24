@@ -38,22 +38,25 @@ namespace TextRPG
 
             itemDb = new Item[]
             {
+            new Item("포션",2,30,"체력을 회복시키는 포션입니다.",200),
             new Item("수련자의 갑옷", 1, 5,"수련에 도움을 주는 갑옷입니다. ",1000),
             new Item("쓸만한 방패", 1,7, "나무로 만들어진 쓸만한 방패입니다.", 1800),
             new Item("무쇠갑옷", 1, 9,"무쇠로 만들어져 튼튼한 갑옷입니다. ",2000),
             new Item("스파르타의 갑옷", 1, 15,"스파르타의 전사들이 사용했다는 전설의 갑옷입니다. ",3500),
             new Item("낣은 검", 0, 2,"쉽게 볼 수 있는 낡은 검 입니다. ",600),
-            new Item("좋은 검", 0,4, "잘 다듬어져 있는 가성비 좋은 검 입니다.", 1000),
             new Item("청동 도끼", 0, 5,"어디선가 사용됐던거 같은 도끼입니다. ",1500),
-            new Item("스파르타의 창", 0, 7,"스파르타의 전사들이 사용했다는 전설의 창입니다. ",2500)
+            new Item("질풍 검", 0, 10,"야스오의 무기입니다.",10000)
             };
 
 
             monstersDb = new Monster[]
             {
-                    new Monster(2, "미니언", 5, 15,itemDb[4],100),
-                    new Monster(3,"공허충",9,10,itemDb[5],200),
-                    new Monster(5,"대포미니언",10,20,itemDb[6],300)
+                    new Monster(2, "미니언", 5, 15,itemDb[0],100),
+                    new Monster(3,"공허충",9,10,itemDb[0],200),
+                    new Monster(5,"대포미니언",10,20,itemDb[0],300),
+                    new Monster(7,"칼날 부리",10,30,itemDb[5],400),
+                    new Monster(8,"어스름 늑대",12,30,itemDb[6],500),
+                    new Monster(10,"야스오",30,50,itemDb[7],600)
             };
 
             player.SkillSet();
