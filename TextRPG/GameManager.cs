@@ -33,7 +33,7 @@ namespace TextRPG
 
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
-            player = new Character(1, nameCreate(), jobSelect(),50, 1500);
+            player = new Character(5, nameCreate(), jobSelect(),50, 1500);
             monsters = new Monster[4];
 
             itemDb = new Item[]
@@ -177,7 +177,7 @@ namespace TextRPG
                     break;
 
                 case 3:
-                    MinionQuestUI();
+                    DisplayQuestUI();
                     //DisplayShopUI();//상점 열기
                     break;
                 case 4:
@@ -279,7 +279,7 @@ namespace TextRPG
                 default:
 
                     int itemIdx = command - 1;
-                    Item targetItem = itemDb[itemIdx];
+                    Item targetItem = player.Inventory[itemIdx];
                     player.EquipItem(targetItem);
 
                     DisplayEquipUI();
@@ -819,7 +819,35 @@ namespace TextRPG
                     break;
             }
         }
+        void DisplayQuestUI() //2025.04.24 퀘스트 UI
+        {
+            Console.Clear();
+            Console.WriteLine("[Quest!!]\n");
+            Console.WriteLine(" 1. 마을을 위협하는 미니언 처치");
+            Console.WriteLine(" 2. 장비를 장착해보자");
+            Console.WriteLine(" 3. 더욱 더 강해지기!\n");
+            Console.WriteLine(" 0. 나가기\n");
+            Console.WriteLine("원하시는 퀘스트를 선택해주세요.");
+            Console.Write(">> ");
 
+            int choice = inputCommand(0, 3);
+
+            switch (choice)
+            {
+                case 0:
+                    DisplayMainUI();
+                    break;
+                case 1:
+                    MinionQuestUI();
+                    break;
+                case 2:
+                    // EquipQuestUI();
+                    break;
+                case 3:
+                    StrongQuestUI();
+                    break;
+            }
+        }
         void MinionQuestUI()
         {
             Console.Clear();
@@ -896,6 +924,47 @@ namespace TextRPG
                 monster.isDie())
             {
                 minionKill++;
+            }
+        }
+
+        void StrongQuestUI() //레벨업 퀘스트 //날리기
+        {
+            Console.Clear();
+            Console.WriteLine("Quest!!\n");
+            Console.WriteLine("더욱 더 강해지기");
+
+            Console.WriteLine("자네, 강해지고 싶지 않나?");
+            Console.WriteLine("레벨 5만 되어도 새로운 힘을 얻을 수 있다네!\n");
+
+            Console.WriteLine($"- 현재 레벨 : {player.Level} / 5");
+            Console.WriteLine("- 보상 : 질풍 검 x1\n");
+
+            Console.WriteLine("1. 보상 받기");
+            Console.WriteLine("2. 나가기\n");
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+
+            int command = inputCommand(1, 2);
+
+            switch (command)
+            {
+                case 1:
+                    if (player.Level >= 5)
+                    {
+                        player.Inventory.Add(itemDb[7]); // 질풍 검 보상 지급
+                        Console.WriteLine("퀘스트 클리어!!");
+                        Console.ReadLine();
+                        StrongQuestUI();
+                    }
+                    else
+                    {
+                        Console.WriteLine("레벨이 부족합니다! 더 성장하세요!");
+                        Console.ReadLine();
+                        StrongQuestUI();
+                    }
+                    break;
+                case 2:
+                    DisplayQuestUI();
+                    break;
             }
         }
 
