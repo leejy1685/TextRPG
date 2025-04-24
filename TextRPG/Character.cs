@@ -177,7 +177,7 @@ namespace TextRPG
 
             if (Exp >= ExpBar) // 현재 Exp가 ExpBar 이상일 경우
             {
-                Level++; // 레벨업
+                Level++; // 레벨업 //여기
                 Exp -= ExpBar; // 레벨업 후 잔존 경험치 계산
 
                 switch (Level) // 레벨업에 따른 ExpBar 증가

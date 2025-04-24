@@ -710,7 +710,7 @@ namespace TextRPG
 
         void DisplayVictoryUI()
         {
-            //캐릭터 마나 회복, 캐릭터가 여러번 마나회복을
+            // 캐릭터 마나 회복
             //하는 것을 막기 위해서 턴 종료 시점에 회복
             player.recoveryMp();
 
@@ -720,12 +720,33 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
+
+            // 몬스터 처치 후 경험치 획득 및 레벨업 확인
+            bool LevelUp = false;
+            foreach (var monster in monsters)
+            {
+                if (player.LevelUp(monster)) // 레벨업 체크
+                {
+                    LevelUp = true;
+                }
+            }
+
+            // 레벨업이 되었으면 레벨업 UI 출력
+            if (LevelUp)
+            {
+                Console.WriteLine("레벨업! 축하합니다!");
+                Console.WriteLine($"Lv.{player.Level - 1} -> Lv.{player.Level}");
+                Console.WriteLine($"새로운 경험치 바: {player.Exp}/{player.ExpBar}");
+            }
+
+            // 플레이어 정보 표시
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
             Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
 
+            // 사용자가 다음을 선택할 때까지 대기
             int command = inputCommand(0, 0);
 
             switch (command)

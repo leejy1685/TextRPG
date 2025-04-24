@@ -7,8 +7,8 @@
       "RelativeMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|solutionrelative:gamemanager2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|c:\\users\\ggi00\\documents\\github\\textrpg\\textrpg\\dungeon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|solutionrelative:dungeon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|c:\\users\\ggi00\\documents\\github\\textrpg\\textrpg\\character.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|solutionrelative:character.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|c:\\users\\ggi00\\documents\\github\\textrpg\\textrpg\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -19,8 +19,8 @@
       "RelativeMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|solutionrelative:character2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|c:\\users\\ggi00\\documents\\github\\textrpg\\textrpg\\character.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|solutionrelative:character.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|c:\\users\\ggi00\\documents\\github\\textrpg\\textrpg\\dungeon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|solutionrelative:dungeon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{598D46A0-4D91-4B5C-8748-78DDAC9061D5}|TextRPG.csproj|c:\\users\\ggi00\\documents\\github\\textrpg\\textrpg\\skill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -38,13 +38,13 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "Character.cs",
               "DocumentMoniker": "C:\\Users\\ggi00\\Documents\\GitHub\\TextRPG\\TextRPG\\Character.cs",
               "RelativeDocumentMoniker": "Character.cs",
               "ToolTip": "C:\\Users\\ggi00\\Documents\\GitHub\\TextRPG\\TextRPG\\Character.cs",
               "RelativeToolTip": "Character.cs",
-              "ViewState": "AgIAANoAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAJ0AAAAAAAAAAAAqwMAAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-23T10:37:15.382Z",
               "EditorCaption": ""
@@ -57,7 +57,7 @@
               "RelativeDocumentMoniker": "GameManager2.cs",
               "ToolTip": "C:\\Users\\ggi00\\Documents\\GitHub\\TextRPG\\TextRPG\\GameManager2.cs",
               "RelativeToolTip": "GameManager2.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAD4vxsAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAANACAAAAAAAAAAAAwOoCAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-23T10:32:55.003Z",
               "EditorCaption": ""
@@ -77,7 +77,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "Dungeon.cs",
               "DocumentMoniker": "C:\\Users\\ggi00\\Documents\\GitHub\\TextRPG\\TextRPG\\Dungeon.cs",
               "RelativeDocumentMoniker": "Dungeon.cs",
@@ -85,8 +85,7 @@
               "RelativeToolTip": "Dungeon.cs",
               "ViewState": "AgIAAB8AAAAAAAAAAAAcwCsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T10:35:55.221Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-23T10:35:55.221Z"
             },
             {
               "$type": "Document",
@@ -98,8 +97,7 @@
               "RelativeToolTip": "Skill.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T10:35:47.631Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-23T10:35:47.631Z"
             },
             {
               "$type": "Document",
