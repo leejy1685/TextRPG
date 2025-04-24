@@ -136,7 +136,7 @@
               "RelativeDocumentMoniker": "GameManager.cs",
               "ToolTip": "C:\\Users\\\uC774\uC900\uC601\\Documents\\GitHub\\TextRPG\\TextRPG\\GameManager.cs",
               "RelativeToolTip": "GameManager.cs",
-              "ViewState": "AgIAADgDAAAAAAAAAAAuwEcDAAA8AAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAAAIwEUAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-22T08:21:18.618Z",
               "EditorCaption": ""
@@ -151,7 +151,8 @@
               "RelativeToolTip": "Monster.cs",
               "ViewState": "AgIAAA0AAAAAAAAAAAAowCMAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T05:40:23.858Z"
+              "WhenOpened": "2025-04-22T05:40:23.858Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
