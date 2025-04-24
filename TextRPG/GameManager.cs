@@ -739,6 +739,23 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
+            Console.WriteLine("[캐릭터 정보]");
+
+            // 몬스터 처치 후 경험치 획득 및 레벨업 확인
+            bool LevelUp = false;
+            foreach (var monster in monsters)
+            {
+                if (player.LevelUp(monster)) // 레벨업 체크
+                {
+                    LevelUp = true;
+                }
+            }
+
+            // 레벨업이 되었으면 레벨업 UI 출력
+            if (LevelUp)
+            {
+                Console.WriteLine($"Lv.{player.Level - 1} -> Lv.{player.Level}");
+            }
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
             Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
             Console.WriteLine();
