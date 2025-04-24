@@ -152,9 +152,9 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리");
-            Console.WriteLine("3. 미니언 퀘스트");
-            Console.WriteLine("4. 던전입장");
-            Console.WriteLine("5. 휴식하기");
+            Console.WriteLine("3. 퀘스트");
+            Console.WriteLine("4. 전투 시작");
+            Console.WriteLine("5. 회복 아이템");
             //Console.WriteLine("0. 저장 후 종료");
             Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
@@ -182,7 +182,7 @@ namespace TextRPG
                     DisplayBattleUI();//던전 열기
                     break;
                 case 5:
-                    DisplayRestUI();//휴식
+                    DisplayPotionUI();//휴식
                     break;
                     //case 0:
                     //    saveData();
@@ -878,14 +878,14 @@ namespace TextRPG
             }
         }
 
-        void DisplayRestUI()
+        void DisplayPotionUI()
         {
             Console.Clear();
 
-            Console.WriteLine("휴식하기");
-            Console.WriteLine($"500 G 를 내면 체력을 회복 할 수 있습니다. (보유 골드 : {player.Gold} G)");
+            Console.WriteLine("회복");
+            //Console.WriteLine($"포션을 사용하면 체력을 30 회복 할 수 있습니다. (남은 포션 : {player.numberOfPotion()} )");
             Console.WriteLine();
-            Console.WriteLine("1. 휴식 하기");
+            Console.WriteLine("1. 사용하기");
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
@@ -898,18 +898,8 @@ namespace TextRPG
                     DisplayMainUI();
                     break;
                 case 1:
-                    if (player.Gold >= 500)
-                    {
-                        player.Gold -= 500;
-                        player.Hp = 100;
-                        Console.WriteLine("휴식을 완료했습니다.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Gold 가 부족합니다.");
-                    }
-                    Console.ReadLine();
-                    DisplayRestUI();
+                    //player.usePotion();
+                    DisplayPotionUI();
                     break;
             }
 
