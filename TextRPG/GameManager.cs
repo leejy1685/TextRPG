@@ -60,6 +60,10 @@ namespace TextRPG
             };
 
             player.SkillSet();
+            for(int i = 0; i < 3; i++)
+            {
+                player.Inventory.Add(itemDb[0]);
+            }
         }
 
         public Monster[] createMonsters()
@@ -173,7 +177,7 @@ namespace TextRPG
                     break;
 
                 case 3:
-                    MinionQuesUI();
+                    MinionQuestUI();
                     //DisplayShopUI();//상점 열기
                     break;
                 case 4:
@@ -799,7 +803,7 @@ namespace TextRPG
             }
         }
 
-        void MinionQuesUI()
+        void MinionQuestUI()
         {
             Console.Clear();
             Console.WriteLine("Quest!!");
@@ -845,7 +849,7 @@ namespace TextRPG
                             Console.WriteLine("퀘스트 클리어!!");
                             Console.ReadLine();
                         }
-                        MinionQuesUI();
+                        MinionQuestUI();
                         break;
                     case 2:
                         DisplayMainUI();
@@ -859,7 +863,7 @@ namespace TextRPG
                 {
                     case 1:
                         minionQuest = true;
-                        MinionQuesUI();
+                        MinionQuestUI();
                         break;
                     case 2:
                         DisplayMainUI();
@@ -883,7 +887,7 @@ namespace TextRPG
             Console.Clear();
 
             Console.WriteLine("회복");
-            //Console.WriteLine($"포션을 사용하면 체력을 30 회복 할 수 있습니다. (남은 포션 : {player.numberOfPotion()} )");
+            Console.WriteLine($"포션을 사용하면 체력을 30 회복 할 수 있습니다. (남은 포션 : {player.numberOfPotion()} )");
             Console.WriteLine();
             Console.WriteLine("1. 사용하기");
             Console.WriteLine("0. 나가기");
@@ -898,7 +902,7 @@ namespace TextRPG
                     DisplayMainUI();
                     break;
                 case 1:
-                    //player.usePotion();
+                    player.UsePotion(itemDb[0]);
                     DisplayPotionUI();
                     break;
             }
