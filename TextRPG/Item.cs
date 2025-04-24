@@ -33,7 +33,7 @@ namespace TextRPG
 
         public Item()
         {
-
+            
         }
 
         public string ItemInfoText()

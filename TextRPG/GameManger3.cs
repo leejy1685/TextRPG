@@ -17,7 +17,12 @@ namespace TextRPG
         private Character player;
         private Item[] itemDb;
         private Dungeon[] dungeons;
+        Monster[] monstersDb;
         Monster[] monsters;
+
+        //미니언 퀘스트
+        int minionKill = 0;
+        bool minionQuest = false;
 
         private Random random;
 
@@ -29,27 +34,50 @@ namespace TextRPG
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
             player = new Character(1, nameCreate(), jobSelect(), 50, 1500);
-            monsters = new Monster[3];
+            monsters = new Monster[4];
 
             itemDb = new Item[]
             {
+            new Item("포션",2,30,"체력을 회복시키는 포션입니다.",200),
             new Item("수련자의 갑옷", 1, 5,"수련에 도움을 주는 갑옷입니다. ",1000),
-            new Item("그래도 좋은 갑옷", 1,7, "적당한 선능에 그럭저럭 쓸만한 갑옷입니다.", 1800),
+            new Item("쓸만한 방패", 1,7, "나무로 만들어진 쓸만한 방패입니다.", 1800),
             new Item("무쇠갑옷", 1, 9,"무쇠로 만들어져 튼튼한 갑옷입니다. ",2000),
             new Item("스파르타의 갑옷", 1, 15,"스파르타의 전사들이 사용했다는 전설의 갑옷입니다. ",3500),
             new Item("낣은 검", 0, 2,"쉽게 볼 수 있는 낡은 검 입니다. ",600),
-            new Item("좋은 검", 0,4, "잘 다듬어져 있는 가성비 좋은 검 입니다.", 1000),
             new Item("청동 도끼", 0, 5,"어디선가 사용됐던거 같은 도끼입니다. ",1500),
-            new Item("스파르타의 창", 0, 7,"스파르타의 전사들이 사용했다는 전설의 창입니다. ",2500)
+            new Item("질풍 검", 0, 10,"야스오의 무기입니다.",10000)
             };
 
 
-            monsters = new Monster[]
+            monstersDb = new Monster[]
             {
-                    new Monster(2, "미니언", 5, 15),
-                    new Monster(3,"공허충",9,10),
-                    new Monster(5,"대포미니언",10,20)
+                    new Monster(2, "미니언", 5, 15,itemDb[0],100),
+                   // new Monster(3,"공허충",9,10,itemDb[0],200),
+                   // new Monster(5,"대포미니언",10,20,itemDb[0],300),
+                   // new Monster(7,"칼날 부리",10,30,itemDb[5],400),
+                   // new Monster(8,"어스름 늑대",12,30,itemDb[6],500),
+                   // new Monster(10,"야스오",30,50,itemDb[7],600)
             };
+
+            player.SkillSet();
+        }
+
+        public Monster[] createMonsters()
+        {
+            Random random = new Random();
+
+            // 1마리에서 4마리까지 랜덤 생성
+            int numberOfMonsters = random.Next(1, 5);
+            Monster[] monsters = new Monster[numberOfMonsters];
+
+            // 랜덤으로 몬스터 선택하여 배열에 추가
+            for (int i = 0; i < numberOfMonsters; i++)
+            {
+                int randomIndex = random.Next(monstersDb.Length);
+                monsters[i] = new Monster(monstersDb[randomIndex]);
+            }
+
+            return monsters;
         }
 
         //플레이어 캐릭터의 이름을 만드는 메서드
@@ -124,7 +152,7 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리");
-            Console.WriteLine("3. 상점");
+            Console.WriteLine("3. 미니언 퀘스트");
             Console.WriteLine("4. 던전입장");
             Console.WriteLine("5. 휴식하기");
             //Console.WriteLine("0. 저장 후 종료");
@@ -145,10 +173,14 @@ namespace TextRPG
                     break;
 
                 case 3:
-                    DisplayShopUI();//상점 열기
+                    DisplayQuesUI();//퀘스트 목록
+                    // MinionQuesUI();
+                    //DisplayShopUI();//상점 열기
                     break;
                 case 4:
-                    DisplayBattleUI();//전투 열기
+                    player.beforeHpSave();
+                    monsters = createMonsters();
+                    DisplayBattleUI();//던전 열기
                     break;
                 case 5:
                     DisplayRestUI();//휴식
@@ -420,29 +452,38 @@ namespace TextRPG
             //몬스터 정보 표시되는 함수
             foreach (Monster monster in monsters)
             {
+                if (monster.isDie()) Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine(monster.monsterInfo());
+                if (monster.isDie()) Console.ResetColor();
             }
             Console.WriteLine();
-            Console.WriteLine("[내정보]");
-            player.DisplayBattlePlayerInfo();
             Console.WriteLine();
+            Console.WriteLine("[내정보]");
 
+            player.DisplayBattlePlayerInfo();
+
+            Console.WriteLine();
             Console.WriteLine("1. 공격");
+            Console.WriteLine("2. 스킬");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
-            int command = inputCommand(1, 1);
+            int command = inputCommand(1, 2);
 
             switch (command)
             {
                 case 1:
-                    DisplayAttackUI();
+                    DisplayAttackUI(false);
                     break;
+                case 2:
+                    DisplaySkillUI();
+                    break;
+
             }
 
 
         }
 
-        void DisplayAttackUI()
+        int DisplayAttackUI(bool skill)
         {
             Console.Clear();
             Console.WriteLine("Battle!!\n");
@@ -452,15 +493,19 @@ namespace TextRPG
             //몬스터 정보 표시되는 함수
             for (int i = 0; i < monsters.Length; i++)
             {
+                if (monsters[i].isDie()) Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine($"{i + 1} {monsters[i].monsterInfo()}");
+                if (monsters[i].isDie()) Console.ResetColor();
             }
 
             Console.WriteLine();
             Console.WriteLine("[내정보]");
+            player.DisplayBattlePlayerInfo();
 
             // 캐릭터 정보
             Console.WriteLine();
             Console.WriteLine("0. 취소");
+            Console.WriteLine();
             Console.WriteLine("대상을 선택해주세요.");
 
             int command = inputCommand(0, monsters.Length);
@@ -472,14 +517,72 @@ namespace TextRPG
                     break;
                 default:
                     int targetMonster = command - 1;
-                    DisplayMonsterDamageUI(targetMonster); //플레이어를 공격
-                    //EnemyPhase 여기서 시작해야할듯
-                    DisplayEnemyPhaseUI(); // 몬스터 턴을 여기서 한번만 호출하게끔
+                    if (monsters[targetMonster].isDie())
+                    {   //이미 죽은 몬스터를 공격 지정 할 때
+                        Console.WriteLine("이미 죽은 몬스터 입니다.");
+                        DisplayAttackUI(false);
+                    }
+                    else
+                    {
+                        if (skill)  //현재 공격이 스킬 일 때
+                            return targetMonster;
+                        //일반 공격 UI
+                        DisplayMonsterDamageUI(targetMonster);
+                    }
+
+                    DisplayEnemyPhaseUI();
                     break;
+            }
+            return -1;
+        }
+
+        void DisplaySkillUI() // 전투 - 스킬 목록 확인
+        {
+            Console.Clear();
+            Console.WriteLine("Battle!!\n");
+
+            //몬스터 생성되는 함수
+
+            //몬스터 정보 표시되는 함수
+            foreach (Monster monster in monsters)
+            {
+                Console.WriteLine(monster.monsterInfo());
+            }
+            Console.WriteLine();
+            Console.WriteLine("[내정보]");
+            player.DisplayBattlePlayerInfo();
+            Console.WriteLine();
+
+            //스킬 목록 출력
+            for (int i = 0; i < player.skillDb.Length; i++)
+            {
+                Console.Write($"{i + 1}. ");
+                player.skillDb[i].skillInfo();
+            }
+
+            Console.WriteLine("0. 취소");
+            Console.WriteLine();
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+
+            int command = inputCommand(0, 2);
+
+            switch (command)
+            {
+                case 0:
+                    DisplayBattleUI(); // 공격 or 스킬 선택 화면으로 돌아가기
+                    break;
+                case 1:
+                    AlphaStrike(command);
+                    //DisplayAttackUI(false);
+                    break;
+                case 2:
+                    DoubleStrike(command);
+                    break;
+
             }
         }
 
-        void DisplayMonsterDamageUI(int targetMonster)
+        void DisplayMonsterDamageUI(int target)
         {
             Console.Clear();
             Console.WriteLine("Battle!!\n");
@@ -493,20 +596,22 @@ namespace TextRPG
                 baseDamage = (int)(baseDamage * 1.6f); // 치명타일 경우 1.6배
             }
             // 3. 체력 변화 전 상태 저장
-            int hpBefore = monsters[targetMonster].Hp;
+            int hpBefore = monsters[target].Hp;
             // 4. 데미지 적용
-            monsters[targetMonster].Hp = Math.Max(0, monsters[targetMonster].Hp - baseDamage);
-            string hpAfter = monsters[targetMonster].isDie() ? "Dead" : monsters[targetMonster].Hp.ToString();
+            monsters[target].Hp = Math.Max(0, monsters[target].Hp - baseDamage);
+            string hpAfter = monsters[target].isDie() ? "Dead" : monsters[target].Hp.ToString();
             // 5. 출력
             Console.WriteLine($"{player.Name}의 공격!");
-            Console.WriteLine($"Lv.{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. [대미지 : {baseDamage}]" +
+            Console.WriteLine($"Lv.{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. [대미지 : {baseDamage}]" +
                               (isCritical ? " - 치명타 공격!!" : ""));
 
             Console.WriteLine();
-            Console.WriteLine($"Lv.{monsters[targetMonster].level} {monsters[targetMonster].name}");
+            Console.WriteLine($"Lv.{monsters[target].level} {monsters[target].name}");
             Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
             Console.WriteLine();
             Console.WriteLine("0. 다음");
+
+            CheckMinionQuest(monsters[target]);
 
             int command = inputCommand(0, 0);
 
@@ -524,13 +629,64 @@ namespace TextRPG
                     else
                         DisplayEnemyPhaseUI();
                     break;
-                    
+
             }
 
         }
 
+        void DisplaySkillDamageUI(int target, int skillNum)
+        {
+            Console.Clear();
+            Console.WriteLine("Battle!!\n");
+
+            int damage = player.PlayerDamage(player.skillDb[skillNum].Value);
+
+            Console.WriteLine($"{player.Name}의 공격!");
+            Console.WriteLine($"Lv{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. " +
+                $"[대미지 : {damage}]");
+            Console.WriteLine();
+            Console.WriteLine($"Lv{monsters[target].level} {monsters[target].name} ");
+
+            int monsterHp = monsters[target].Hp - damage;
+
+            Console.WriteLine("HP {0} -> {1}", monsters[target].Hp, monsterHp <= 0 ? "Dead" : monsterHp);
+
+            //대미지 입히는거 계산
+            monsters[target].Hp = monsterHp;
+
+            //미니언 퀘스트
+            CheckMinionQuest(monsters[target]);
+
+            Console.WriteLine();
+            Console.WriteLine("0. 다음");
+
+            int command = inputCommand(0, 0);
+
+            switch (command)
+            {
+                case 0:
+                    int aliveMon = monsters.Length;
+                    foreach (Monster monster in monsters)
+                    {
+                        if (monster.isDie())
+                            aliveMon--;
+                    }
+                    if (aliveMon == 0)
+                        DisplayVictoryUI();
+
+
+                    break;
+            }
+
+        }
+
+
         void DisplayEnemyPhaseUI()
         {
+            //캐릭터 마나 회복, 캐릭터가 여러번 마나회복을
+            //하는 것을 막기 위해서 턴 종료 시점에 회복
+            player.recoveryMp();
+
             foreach (Monster monster in monsters)
             {
                 if (!monster.isDie())
@@ -554,7 +710,7 @@ namespace TextRPG
                     Console.WriteLine("0. 다음");
 
                     int command = inputCommand(0, 0);
-                                       
+
                     if (player.isDie())
                     {
                         DisplayLoseUI();
@@ -563,12 +719,18 @@ namespace TextRPG
                 }
             }
             // 모든 몬스터(살아있는 기준)가 공격 후 다시 공격 기회
-            DisplayAttackUI();
+            DisplayBattleUI();
         }
 
 
         void DisplayVictoryUI()
         {
+            //캐릭터 마나 회복, 캐릭터가 여러번 마나회복을
+            //하는 것을 막기 위해서 턴 종료 시점에 회복
+            player.recoveryMp();
+
+            int totalGetGold = 0; // 총합 획득 골드
+
             Console.Clear();
             Console.WriteLine("Battle!! - Result\n");
             Console.WriteLine("Victory");
@@ -576,7 +738,33 @@ namespace TextRPG
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
-            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
+            Console.WriteLine();
+            Console.WriteLine("[획득 아이템]");
+
+            for (int i = 0; i < monsters.Length; i++) // 골드 드롭 여부 체크
+            {
+                if (monsters[i].goldDrop() != 0) // 골드가 드롭됐을 경우
+                {
+                    totalGetGold += monsters[i].goldDrop(); // 총합 드롭 골드에 더하기
+                }
+            }
+
+            if (totalGetGold != 0) // 드롭 골드가 0이 아니라면
+            {
+                Console.WriteLine($"{totalGetGold} Gold");
+                player.Gold += totalGetGold; // 골드 획득
+            }
+
+            for (int i = 0; i < monsters.Length; i++) // 아이템 드롭 여부 체크
+            {
+                if (monsters[i].dropItem() != null) // 아이템이 드롭됐을 경우
+                {
+                    Console.WriteLine($"{monsters[i].item.Name} - 1"); // 아이템 획득 메시지
+                    player.Inventory.Add(monsters[i].item); // 아이템을 인벤토리에 추가
+                }
+            }
+
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
@@ -610,6 +798,153 @@ namespace TextRPG
                 case 0:
                     DisplayMainUI();
                     break;
+            }
+        }
+
+        void DisplayQuesUI() //2025.04.24 퀘스트 UI
+        {
+            Console.Clear();
+            Console.WriteLine("[Quest!!]\n");
+            Console.WriteLine(" 1. 마을을 위협하는 미니언 처치");
+            Console.WriteLine(" 2. 장비를 장착해보자");
+            Console.WriteLine(" 3. 더욱 더 강해지기!\n");
+            Console.WriteLine("원하시는 퀘스트를 선택해주세요.");
+            Console.Write(">> ");
+
+            int choice = inputCommand(1, 3);
+
+            switch (choice)
+            {
+                case 1:
+                    MinionQuesUI();
+                    break;
+                case 2:
+                   // EquipQuestUI();
+                    break;
+                case 3:
+                    StrongQuestUI();
+                    break;
+            }
+        }
+
+        void MinionQuesUI()
+        {
+            Console.Clear();
+            Console.WriteLine("Quest!!");
+            Console.WriteLine();
+            Console.WriteLine("마을을 위협하는 미니언 처치");
+            Console.WriteLine();
+            Console.WriteLine("이봐! 마을 근처에 미니언들이 너무 많아졌다고 생각하지 않나??");
+            Console.WriteLine("마을주민들의 안전을 위해서라도 저것들 수를 좀 줄여야 한다고!");
+            Console.WriteLine("자네가 좀 처치해주게!");
+            Console.WriteLine();
+            Console.WriteLine($"- 미니언 5마리 처치 ({minionKill}/5)");
+            Console.WriteLine();
+            Console.WriteLine("- 보상 -");
+            Console.WriteLine($"{itemDb[1].Name} x 1");
+            Console.WriteLine("5G");
+            Console.WriteLine();
+            if (minionQuest)
+            {
+                Console.WriteLine("1. 보상 받기");
+                Console.WriteLine("2. 돌아가기");
+            }
+            else
+            {
+                Console.WriteLine("1. 수락");
+                Console.WriteLine("2. 거절");
+            }
+            Console.WriteLine();
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+
+            int command = inputCommand(1, 2);
+
+            if (minionQuest)
+            {
+                switch (command)
+                {
+                    case 1:
+                        if (minionKill >= 5)
+                        {
+                            minionQuest = false;
+                            minionKill = 0;
+                            player.Inventory.Add(itemDb[1]);
+                            player.Gold += 5;
+                            Console.WriteLine("퀘스트 클리어!!");
+                            Console.ReadLine();
+                        }
+                        MinionQuesUI();
+                        break;
+                    case 2:
+                        DisplayMainUI();
+                        //DisplayQuestUI();
+                        break;
+                }
+            }
+            else
+            {
+                switch (command)
+                {
+                    case 1:
+                        minionQuest = true;
+                        MinionQuesUI();
+                        break;
+                    case 2:
+                        DisplayMainUI();
+                        //DisplayQuestUI();
+                        break;
+                }
+            }
+        }
+
+        void StrongQuestUI() //레벨업 퀘스트 //날리기
+        {
+            Console.Clear();
+            Console.WriteLine("Quest!!\n");
+            Console.WriteLine("더욱 더 강해지기");
+
+            Console.WriteLine("자네, 강해지고 싶지 않나?");
+            Console.WriteLine("레벨 5만 되어도 새로운 힘을 얻을 수 있다네!\n");
+
+            Console.WriteLine($"- 현재 레벨 : {player.Level} / 5");
+            Console.WriteLine("- 보상 : 질풍 검 x1\n");
+
+            Console.WriteLine("1. 보상 받기");
+            Console.WriteLine("2. 나가기\n");
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+
+            int command = inputCommand(1, 2);
+
+            switch (command)
+            {
+                case 1:
+                    if (player.Level >= 5)
+                    {
+                        player.Inventory.Add(itemDb[7]); // 질풍 검 보상 지급
+                        Console.WriteLine("퀘스트 클리어!!");
+                        Console.ReadLine();
+                        StrongQuestUI();
+                    }
+                    else
+                    {
+                        Console.WriteLine("레벨이 부족합니다! 더 성장하세요!");
+                        Console.ReadLine();
+                        StrongQuestUI();
+                    }
+                    break;
+                case 2:
+                    DisplayQuesUI();
+                    break;
+            }
+        }
+
+
+        void CheckMinionQuest(Monster monster)
+        {
+            if (minionQuest && monster.name == monstersDb[0].name &&
+                monster.isDie())
+            {
+                minionKill++;
             }
         }
 
@@ -665,6 +1000,39 @@ namespace TextRPG
                 Console.WriteLine("잘못된 입력입니다!!!!");
             }
         }
+
+        void AlphaStrike(int skillNum)
+        {
+            player.Mp -= 10;
+            int target = DisplayAttackUI(true);
+            int skill = skillNum - 1;
+            DisplaySkillDamageUI(target, skill);
+            DisplayEnemyPhaseUI();
+        }
+
+        void DoubleStrike(int skillNum)
+        {
+            player.Mp -= 15;
+            int skill = skillNum - 1;
+
+            Random random = new Random();
+
+            int target = random.Next(monsters.Length);
+            while (monsters[target].isDie())
+            {
+                target = random.Next(monsters.Length);
+            }
+            DisplaySkillDamageUI(target, skill);
+
+            target = random.Next(monsters.Length);
+            while (monsters[target].isDie())
+            {
+                target = random.Next(monsters.Length);
+            }
+            DisplaySkillDamageUI(target, skill);
+            DisplayEnemyPhaseUI();
+        }
+
 
 
     }

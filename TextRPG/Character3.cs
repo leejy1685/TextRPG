@@ -22,6 +22,7 @@ namespace TextRPG
         public int Atk { get; }
         public int Def { get; }
         public int Hp { get; set; }
+        public int Beforehp { get; set; } // 전투 시작 시점의 hp
         public int Mp { get; set; } // MP - 스킬 사용에 필요한 마나
         public int Maxhp { get; set; } // 최대 hp
         public int Maxmp { get; set; } // 최대 mp
@@ -281,5 +282,16 @@ namespace TextRPG
                 return false;
             }
         }
+        public void recoveryMp()
+        {
+            Mp += 10;
+            Mp = Mp >= Maxmp ? Maxmp : Mp;
+        }
+        public void beforeHpSave()
+        {
+            Beforehp = Hp; // 전투 시작 시점의 체력 저장
+        }
+
     }
+
 }
