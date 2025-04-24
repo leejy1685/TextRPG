@@ -38,6 +38,7 @@ namespace TextRPG
         public Item[] EquipList = new Item[2];
 
         public Skill[] skillDb; // 스킬 DB
+       
 
         public int InventoryCount
         {

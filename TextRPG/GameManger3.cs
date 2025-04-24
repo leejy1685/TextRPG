@@ -17,6 +17,9 @@ namespace TextRPG
         private Character player;
         private Item[] itemDb;
         private Dungeon[] dungeons;
+
+        private int stage = 1; // 기본 스테이지 1로 시작
+
         Monster[] monstersDb;
         Monster[] monsters;
 
@@ -152,8 +155,9 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리");
-            Console.WriteLine("3. 미니언 퀘스트");
-            Console.WriteLine("4. 던전입장");
+            Console.WriteLine("3. 퀘스트");
+            //Console.WriteLine("4. 던전입장");
+            Console.WriteLine($"4. 던전입장 ( Stage {stage} )");
             Console.WriteLine("5. 휴식하기");
             //Console.WriteLine("0. 저장 후 종료");
             Console.WriteLine();
@@ -736,6 +740,12 @@ namespace TextRPG
             Console.WriteLine("Victory");
             Console.WriteLine();
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
+
+            if (stage < 3) //클리어시 +1씩 증가 최대 3
+            {
+                stage++;
+            }
+
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
             Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
