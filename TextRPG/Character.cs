@@ -299,9 +299,5 @@ namespace TextRPG
             Mp = Mp >= Maxmp ? Maxmp : Mp;
         }
 
-        public void beforeHpSave()
-        {
-            Beforehp = Hp;
-        }
     }
 }

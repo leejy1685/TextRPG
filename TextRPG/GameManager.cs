@@ -20,6 +20,10 @@ namespace TextRPG
         Monster[] monstersDb;
         Monster[] monsters;
 
+        //미니언 퀘스트
+        int minionKill = 0;
+        bool minionQuest = false;
+
         private Random random;
 
         public GameManager()
@@ -35,7 +39,7 @@ namespace TextRPG
             itemDb = new Item[]
             {
             new Item("수련자의 갑옷", 1, 5,"수련에 도움을 주는 갑옷입니다. ",1000),
-            new Item("그래도 좋은 갑옷", 1,7, "적당한 선능에 그럭저럭 쓸만한 갑옷입니다.", 1800),
+            new Item("쓸만한 방패", 1,7, "나무로 만들어진 쓸만한 방패입니다.", 1800),
             new Item("무쇠갑옷", 1, 9,"무쇠로 만들어져 튼튼한 갑옷입니다. ",2000),
             new Item("스파르타의 갑옷", 1, 15,"스파르타의 전사들이 사용했다는 전설의 갑옷입니다. ",3500),
             new Item("낣은 검", 0, 2,"쉽게 볼 수 있는 낡은 검 입니다. ",600),
@@ -67,8 +71,7 @@ namespace TextRPG
             for (int i = 0; i < numberOfMonsters; i++)
             {
                 int randomIndex = random.Next(monstersDb.Length);
-                Monster mon = monstersDb[randomIndex];
-                monsters[i] = new Monster(mon.level, mon.name, mon.Atk, mon.Hp, mon.item, mon.gold);
+                monsters[i] = new Monster(monstersDb[randomIndex]);
             }
 
             return monsters;
@@ -146,7 +149,7 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리");
-            Console.WriteLine("3. 상점");
+            Console.WriteLine("3. 미니언 퀘스트");
             Console.WriteLine("4. 던전입장");
             Console.WriteLine("5. 휴식하기");
             //Console.WriteLine("0. 저장 후 종료");
@@ -167,9 +170,11 @@ namespace TextRPG
                     break;
 
                 case 3:
-                    DisplayShopUI();//상점 열기
+                    MinionQuesUI();
+                    //DisplayShopUI();//상점 열기
                     break;
                 case 4:
+                    player.beforeHpSave();
                     monsters = createMonsters();
                     DisplayBattleUI();//던전 열기
                     break;
@@ -572,7 +577,7 @@ namespace TextRPG
             }
         }
 
-        void DisplayMonsterDamageUI(int targetMonster)
+        void DisplayMonsterDamageUI(int target)
         {
             Console.Clear();
             Console.WriteLine("Battle!!\n");
@@ -586,20 +591,22 @@ namespace TextRPG
                 baseDamage = (int)(baseDamage * 1.6f); // 치명타일 경우 1.6배
             }
             // 3. 체력 변화 전 상태 저장
-            int hpBefore = monsters[targetMonster].Hp;
+            int hpBefore = monsters[target].Hp;
             // 4. 데미지 적용
-            monsters[targetMonster].Hp = Math.Max(0, monsters[targetMonster].Hp - baseDamage);
-            string hpAfter = monsters[targetMonster].isDie() ? "Dead" : monsters[targetMonster].Hp.ToString();
+            monsters[target].Hp = Math.Max(0, monsters[target].Hp - baseDamage);
+            string hpAfter = monsters[target].isDie() ? "Dead" : monsters[target].Hp.ToString();
             // 5. 출력
             Console.WriteLine($"{player.Name}의 공격!");
-            Console.WriteLine($"Lv.{monsters[targetMonster].level} {monsters[targetMonster].name} 을(를) 맞췄습니다. [대미지 : {baseDamage}]" +
+            Console.WriteLine($"Lv.{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. [대미지 : {baseDamage}]" +
                               (isCritical ? " - 치명타 공격!!" : ""));
 
             Console.WriteLine();
-            Console.WriteLine($"Lv.{monsters[targetMonster].level} {monsters[targetMonster].name}");
+            Console.WriteLine($"Lv.{monsters[target].level} {monsters[target].name}");
             Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
             Console.WriteLine();
             Console.WriteLine("0. 다음");
+
+            CheckMinionQuest(monsters[target]);
 
             int command = inputCommand(0, 0);
 
@@ -641,6 +648,10 @@ namespace TextRPG
 
             //대미지 입히는거 계산
             monsters[target].Hp = monsterHp;
+
+            //미니언 퀘스트
+            CheckMinionQuest(monsters[target]);
+
             Console.WriteLine();
             Console.WriteLine("0. 다음");
 
@@ -713,6 +724,8 @@ namespace TextRPG
             //하는 것을 막기 위해서 턴 종료 시점에 회복
             player.recoveryMp();
 
+            int totalGetGold = 0; // 총합 획득 골드
+
             Console.Clear();
             Console.WriteLine("Battle!! - Result\n");
             Console.WriteLine("Victory");
@@ -720,7 +733,33 @@ namespace TextRPG
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
-            Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
+            Console.WriteLine();
+            Console.WriteLine("[획득 아이템]");
+
+            for (int i = 0; i < monsters.Length; i++) // 골드 드롭 여부 체크
+            {
+                if (monsters[i].goldDrop() != 0) // 골드가 드롭됐을 경우
+                {
+                    totalGetGold += monsters[i].goldDrop(); // 총합 드롭 골드에 더하기
+                }
+            }
+
+            if (totalGetGold != 0) // 드롭 골드가 0이 아니라면
+            {
+                Console.WriteLine($"{totalGetGold} Gold");
+                player.Gold += totalGetGold; // 골드 획득
+            }
+
+            for (int i = 0; i < monsters.Length; i++) // 아이템 드롭 여부 체크
+            {
+                if (monsters[i].dropItem() != null) // 아이템이 드롭됐을 경우
+                {
+                    Console.WriteLine($"{monsters[i].item.Name} - 1"); // 아이템 획득 메시지
+                    player.Inventory.Add(monsters[i].item); // 아이템을 인벤토리에 추가
+                }
+            }
+
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
@@ -754,6 +793,85 @@ namespace TextRPG
                 case 0:
                     DisplayMainUI();
                     break;
+            }
+        }
+
+        void MinionQuesUI()
+        {
+            Console.Clear();
+            Console.WriteLine("Quest!!");
+            Console.WriteLine();
+            Console.WriteLine("마을을 위협하는 미니언 처치");
+            Console.WriteLine();
+            Console.WriteLine("이봐! 마을 근처에 미니언들이 너무 많아졌다고 생각하지 않나??");
+            Console.WriteLine("마을주민들의 안전을 위해서라도 저것들 수를 좀 줄여야 한다고!");
+            Console.WriteLine("자네가 좀 처치해주게!");
+            Console.WriteLine();
+            Console.WriteLine($"- 미니언 5마리 처치 ({minionKill}/5)");
+            Console.WriteLine();
+            Console.WriteLine("- 보상 -");
+            Console.WriteLine($"{itemDb[1].Name} x 1");
+            Console.WriteLine("5G");
+            Console.WriteLine();
+            if (minionQuest)
+            {
+                Console.WriteLine("1. 보상 받기");
+                Console.WriteLine("2. 돌아가기");
+            }
+            else
+            {
+                Console.WriteLine("1. 수락");
+                Console.WriteLine("2. 거절");
+            }
+            Console.WriteLine();
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+
+            int command = inputCommand(1,2);
+
+            if (minionQuest)
+            {
+                switch (command)
+                {
+                    case 1:
+                        if(minionKill >= 5)
+                        {
+                            minionQuest = false;
+                            minionKill = 0;
+                            player.Inventory.Add(itemDb[1]);
+                            player.Gold += 5;
+                            Console.WriteLine("퀘스트 클리어!!");
+                            Console.ReadLine();
+                        }
+                        MinionQuesUI();
+                        break;
+                    case 2:
+                        DisplayMainUI();
+                        //DisplayQuestUI();
+                        break;
+                }
+            }
+            else
+            {
+                switch (command)
+                {
+                    case 1:
+                        minionQuest = true;
+                        MinionQuesUI();
+                        break;
+                    case 2:
+                        DisplayMainUI();
+                        //DisplayQuestUI();
+                        break;
+                }
+            }
+        }
+
+        void CheckMinionQuest(Monster monster)
+        {
+            if (minionQuest && monster.name == monstersDb[0].name &&
+                monster.isDie())
+            {
+                minionKill++;
             }
         }
 
