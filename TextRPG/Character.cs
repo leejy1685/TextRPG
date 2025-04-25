@@ -19,7 +19,7 @@ namespace TextRPG
         public int Level { get; private set; }//레벨
         public string Name { get; }//이름
         public Job job { get; set; }//직업
-        public int Atk { get; set; }//공격력
+        public float Atk { get; set; }//공격력
         public int Def { get; set; }//방어력
         public int Hp { get; set; }//체력
         public int Mp { get; set; } //마나
@@ -39,7 +39,6 @@ namespace TextRPG
         public Item[] EquipList = new Item[2];  //장비 장착 리스트
 
         public Skill[] skillDb; // 스킬 DB
-
         public int InventoryCount
         {
             get
@@ -47,6 +46,8 @@ namespace TextRPG
                 return Inventory.Count;
             }
         }   //인벤토리 길이
+
+        public int critical {  get; set; } //치트용 크확
 
         public Character(int level, string name, Job job, int mp, int gold)
         {
@@ -80,6 +81,7 @@ namespace TextRPG
             Gold = gold;
             Exp = 0;
             ExpBar = 10;
+            critical = 15;
         }//생성자
 
         public void DisplayCharacterInfo()
@@ -257,6 +259,8 @@ namespace TextRPG
             {
                 Level++; // 레벨업
                 Exp -= ExpBar; // 레벨업 후 잔존 경험치 계산
+                Atk += 0.5f;
+                Def += 1;
 
                 switch (Level) // 레벨업에 따른 ExpBar 증가
                 {
@@ -348,7 +352,7 @@ namespace TextRPG
         {
             Random random = new Random(); // 랜덤 클래스 인스턴스 생성
             int critCheck = random.Next(1, 101);
-            return critCheck <= 15; // 치명타 발생 : 랜덤값이 1 ~ 15
+            return critCheck <= critical; // 치명타 발생 : 랜덤값이 1 ~ 15
         }// 치명타 발동 여부 체크
 
         public void beforeSave()

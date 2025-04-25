@@ -9,7 +9,7 @@ namespace TextRPG
     [Serializable]
     class Item
     {
-        public string Name { get; set; }//이름
+        public string Name { get;  set; }//이름
         public int Type { get; set; }//아이템 타입 0 무기 1 방어구 2 포션
         public int Value { get; set; }//아이템의 값 공격력, 방어력, 회복량
         public string Desc { get; set; }//아이템 설명

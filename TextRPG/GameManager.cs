@@ -22,7 +22,7 @@ namespace TextRPG
         Monster[] monsters;
 
         //미니언 퀘스트
-        int minionKill = 0;
+        int minionKill = 5;
         bool minionQuest = false;
 
         //장비 퀘스트
@@ -256,6 +256,10 @@ namespace TextRPG
                     break;
                 case 5:
                     DisplayPotionUI();  //물약
+                    break;
+                case 3535:
+                    Cheat();
+                    DisplayMainUI();
                     break;
                 case 0:
                     SaveData();
@@ -1266,6 +1270,8 @@ namespace TextRPG
                 bool isNumber = int.TryParse(input, out result);
                 if (isNumber)
                 {
+                    if (result == 3535)
+                        return result;
                     if (result >= min && result <= max)
                         return result;
                 }
@@ -1331,12 +1337,34 @@ namespace TextRPG
             int stageD = JsonConvert.DeserializeObject<int>(stageData);
             stage = stageD;
 
-
-
             SetData();
 
         }//데이터 불러오기 메서드
 
+        void Cheat()
+        {
+            //최종 스테이지
+            stage = 4;
+
+            //5레벨까지 필요한 경험치
+            for(int i = 0;i< 21; i++)
+            {
+                player.LevelUp(monstersDb[5]);
+            }
+
+            //모든 아이템 지급
+            for(int i = 0; i < 8; i++)
+            {
+                player.Inventory.Add(itemDb[i]);
+            }
+
+            //체력 마나 회복
+            player.Hp = player.Maxhp;
+            player.Mp = player.Maxmp;
+
+            //크리 확률 100퍼
+            player.critical = 100;
+        }//치트임
 
     }
 }
