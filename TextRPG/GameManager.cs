@@ -28,7 +28,7 @@ namespace TextRPG
         bool equipQuest = false;
 
         //스테이지
-        private int stage = 1; // 기본 스테이지 1로 시작
+        private int stage = 4; // 기본 스테이지 1로 시작
 
         private Random random;
 
@@ -39,10 +39,9 @@ namespace TextRPG
 
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
-            player = new Character(1, nameCreate(), jobSelect(),50, 1500);
-            monsters = new Monster[4];
-
-            itemDb = new Item[]
+            player = new Character(1, nameCreate(), jobSelect(),50, 1500);  //캐릭터 생성
+            player.SkillSet();  //스킬 저장
+            itemDb = new Item[] //아이템 DB
             {
             new Item("포션",2,30,"체력을 회복시키는 포션입니다.",200),
             new Item("수련자의 갑옷", 1, 5,"수련에 도움을 주는 갑옷입니다. ",1000),
@@ -53,54 +52,52 @@ namespace TextRPG
             new Item("청동 도끼", 0, 5,"어디선가 사용됐던거 같은 도끼입니다. ",1500),
             new Item("질풍 검", 0, 20,"야스오의 무기입니다.",10000)
             };
-
-
-            monstersDb = new Monster[]
+            monstersDb = new Monster[]  //몬스터 DB
             {
                     new Monster(2, "미니언", 5, 15,itemDb[0],100),
                     new Monster(3,"공허충",9,10,itemDb[0],200),
                     new Monster(5,"대포미니언",10,20,itemDb[0],300),
                     new Monster(7,"칼날 부리",10,30,itemDb[5],400),
                     new Monster(8,"어스름 늑대",12,30,itemDb[6],500),
-                    new Monster(10,"야스오",30,50,itemDb[7],600)
+                    new Monster(10,"야스오",30,100,itemDb[7],600)
             };
-
-            player.SkillSet();
+            //게임 시작 시 포션 3개 지급
             for(int i = 0; i < 3; i++)
             {
                 player.Inventory.Add(itemDb[0]);
             }
-            player.Inventory.Add(itemDb[5]);
         }
 
-        public Monster[] createMonsters()
+        public void createMonsters()
         {
             Random random = new Random();
 
             // 1마리에서 4마리까지 랜덤 생성
             int numberOfMonsters = random.Next(1, 5);
-            Monster[]  monsters = new Monster[numberOfMonsters];
+            monsters = new Monster[numberOfMonsters];
 
             // 랜덤으로 몬스터 선택하여 배열에 추가
             for (int i = 0; i < numberOfMonsters; i++)
             {
-                int randomIndex = random.Next(2 + stage);
+                int randomIndex = random.Next(2 + stage);   //스테이지 따라서 몬스터 종류가 많아짐
                 monsters[i] = new Monster(monstersDb[randomIndex]);
             }
 
-            return monsters;
-        }
+            //보스 스테이지
+            if(stage == 4)
+            {
+                monsters = new Monster[1];
+                monsters[0] = new Monster(monstersDb[5]);
+            }
+        }//전투에 필요한 몬스터를 생성하는 메서드
 
-        //플레이어 캐릭터의 이름을 만드는 메서드
-        string nameCreate()
+        string nameCreate() //캐릭터 이름 생성
         {
             Console.Clear();
-
             Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
             Console.WriteLine("원하시는 이름을 설정해 주세요\n");
 
             string name = Console.ReadLine();
-
 
             Console.WriteLine("\n입력하신 이름은 {0} 입니다.\n", name);
             Console.WriteLine("1. 저장\n2. 취소\n");
@@ -120,12 +117,10 @@ namespace TextRPG
             return name;
         }
 
-        //플레이어 캐릭터의 직업을 선택하는 메서드
         Job jobSelect()
         {
             Job job = Job.Warrior;
             Console.Clear();
-
             Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
             Console.WriteLine("원하시는 직업을 설정해 주세요.");
             Console.WriteLine();
@@ -152,9 +147,9 @@ namespace TextRPG
             }
 
             return job;
-        }
-        //게임을 진행하는 메서드
-        public void DisplayMainUI()
+        }//캐릭터 직업 선택
+
+        public void DisplayMainUI() //게임을 진행하는 메서드
         {
 
             Console.Clear();
@@ -184,16 +179,15 @@ namespace TextRPG
                     break;
 
                 case 3:
-                    DisplayQuestUI();
-                    //DisplayShopUI();//상점 열기
+                    DisplayQuestUI();//퀘스트 확인
                     break;
                 case 4:
-                    player.beforeSave();
-                    monsters = createMonsters();
-                    DisplayBattleUI();//던전 열기
+                    player.beforeSave();    //체력과 마나 저장
+                    createMonsters();   //몬스터 생성
+                    DisplayBattleUI();  //전투 시작
                     break;
                 case 5:
-                    DisplayPotionUI();//휴식
+                    DisplayPotionUI();  //물약
                     break;
                     //case 0:
                     //    saveData();
@@ -228,7 +222,7 @@ namespace TextRPG
             }
         }
 
-        //인벤토리 확인
+
         void DisplayInventoryUI()
         {
             Console.Clear();
@@ -237,7 +231,7 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine("[아이템 목록]");
 
-            player.DisplayInventory(false, false);
+            player.DisplayInventory(false, false);  //순서표시, 판매금액 표시 없음
 
             Console.WriteLine();
             Console.WriteLine("1. 장착 관리");
@@ -254,12 +248,12 @@ namespace TextRPG
                     break;
 
                 case 1:
-                    DisplayEquipUI();
+                    DisplayEquipUI();   //장착 관리
                     break;
             }
-        }
+        }//인벤토리 확인
 
-        //장비 장착 관리하는 메서드
+        
         void DisplayEquipUI()
         {
             Console.Clear();
@@ -268,7 +262,7 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine("[아이템 목록]");
 
-            player.DisplayInventory(true, false);
+            player.DisplayInventory(true, false);   //순서 표시 있음, 판매 금액 표시 안함
 
             Console.WriteLine();
             Console.WriteLine("0. 나가기");
@@ -294,7 +288,7 @@ namespace TextRPG
             }
 
 
-        }
+        }//장비 장착 관리
 
         //상점을 여는 메서드
         void DisplayShopUI()
@@ -479,6 +473,7 @@ namespace TextRPG
             Console.WriteLine("2. 스킬");
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
+            
             int command = inputCommand(1, 2);
 
             switch (command)
@@ -676,12 +671,9 @@ namespace TextRPG
             Console.WriteLine();
             Console.WriteLine($"Lv{monsters[target].level} {monsters[target].name} ");
 
-            int monsterHp = monsters[target].Hp - damage;
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
             Console.ResetColor();
-            //대미지 입히는거 계산
-            monsters[target].Hp = monsterHp;
 
             //미니언 퀘스트
             CheckMinionQuest(monsters[target]);
@@ -852,7 +844,9 @@ namespace TextRPG
             Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine("0. 다음");
             Console.WriteLine();
