@@ -19,8 +19,8 @@ namespace TextRPG
         public int Level { get; private set; }
         public string Name { get; }
         public Job job { get; set; }
-        public int Atk { get; }
-        public int Def { get; }
+        public int Atk { get; set; }
+        public int Def { get; set; }
         public int Hp { get; set; }
         public int Mp { get; set; } // MP - 스킬 사용에 필요한 마나
         public int Maxhp { get; set; } // 최대 hp
@@ -98,8 +98,8 @@ namespace TextRPG
                     break;
             }
             Console.WriteLine($"{Name} {{ {jobStr} }}");
-            Console.WriteLine(ExtraAtk == 0 ? $"공격력 : {Atk}" : $"공격력 : {Atk + ExtraAtk} (+{ExtraAtk})");
-            Console.WriteLine(ExtraDef == 0 ? $"방어력 : {Def}" : $"방어력 : {Def + ExtraDef} (+{ExtraDef})");
+            Console.WriteLine(ExtraAtk == 0 ? $"공격력 : {Atk}" : $"공격력 : {Atk} (+{ExtraAtk})");
+            Console.WriteLine(ExtraDef == 0 ? $"방어력 : {Def}" : $"방어력 : {Def} (+{ExtraDef})");
             Console.WriteLine($"체력 : {Hp}");
             Console.WriteLine($"Gold : {Gold} G");
         }
@@ -125,11 +125,13 @@ namespace TextRPG
                 {
                     EquipList[item.Type] = new Item();
                     ExtraAtk -= item.Value;
+                    Atk -= ExtraAtk;
                 }
                 else
                 {
                     EquipList[item.Type] = new Item();
                     ExtraDef -= item.Value;
+                    Def += ExtraDef;
                 }
             }
             else
@@ -138,11 +140,13 @@ namespace TextRPG
                 {
                     EquipList[item.Type] = item;
                     ExtraAtk += item.Value;
+                    Atk += ExtraAtk;
                 }
                 else
                 {
                     EquipList[item.Type] = item;
                     ExtraDef += item.Value;
+                    Def += ExtraDef;
                 }
             }
         }

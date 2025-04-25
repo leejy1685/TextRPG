@@ -24,6 +24,9 @@ namespace TextRPG
         int minionKill = 0;
         bool minionQuest = false;
 
+        //스테이지
+        private int stage = 1; // 기본 스테이지 1로 시작
+
         private Random random;
 
         public GameManager()
@@ -157,7 +160,7 @@ namespace TextRPG
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리");
             Console.WriteLine("3. 퀘스트");
-            Console.WriteLine("4. 전투 시작");
+            Console.WriteLine($"4. 던전입장 ( Stage {stage} )");
             Console.WriteLine("5. 회복 아이템");
             //Console.WriteLine("0. 저장 후 종료");
             Console.WriteLine();
@@ -782,6 +785,11 @@ namespace TextRPG
                     Console.WriteLine($"{monsters[i].item.Name} - 1"); // 아이템 획득 메시지
                     player.Inventory.Add(monsters[i].item); // 아이템을 인벤토리에 추가
                 }
+            }
+
+            if (stage < 3) //클리어시 +1씩 증가 최대 3
+            {
+                stage++;
             }
 
             Console.WriteLine();
