@@ -154,8 +154,8 @@ namespace TextRPG
         {
 
             Console.Clear();
-            Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
-            Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.");
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            Console.WriteLine("이제 전투를 시작할 수 있습니다.");
             Console.WriteLine();
             Console.WriteLine("1. 상태 보기");
             Console.WriteLine("2. 인벤토리");
@@ -184,7 +184,7 @@ namespace TextRPG
                     //DisplayShopUI();//상점 열기
                     break;
                 case 4:
-                    player.beforeHpSave();
+                    player.beforeSave();
                     monsters = createMonsters();
                     DisplayBattleUI();//던전 열기
                     break;
@@ -451,7 +451,9 @@ namespace TextRPG
         void DisplayBattleUI()
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Battle!!\n");
+            Console.ResetColor();
 
             //몬스터 생성되는 함수
 
@@ -492,7 +494,9 @@ namespace TextRPG
         int DisplayAttackUI(bool skill)
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Battle!!\n");
+            Console.ResetColor();
 
             //몬스터 생성되는 함수
 
@@ -525,6 +529,7 @@ namespace TextRPG
                     if (monsters[targetMonster].isDie())
                     {   //이미 죽은 몬스터를 공격 지정 할 때
                         Console.WriteLine("이미 죽은 몬스터 입니다.");
+                        Console.ReadLine();
                         DisplayAttackUI(false);
                     }
                     else
@@ -544,9 +549,9 @@ namespace TextRPG
         void DisplaySkillUI() // 전투 - 스킬 목록 확인
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Battle!!\n");
-
-            //몬스터 생성되는 함수
+            Console.ResetColor();
 
             //몬스터 정보 표시되는 함수
             foreach (Monster monster in monsters)
@@ -590,7 +595,9 @@ namespace TextRPG
         void DisplayMonsterDamageUI(int target)
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Battle!!\n");
+            Console.ResetColor();
 
             // 1. 치명타 여부 판단
             bool isCritical = player.isCrit();
@@ -607,12 +614,18 @@ namespace TextRPG
             string hpAfter = monsters[target].isDie() ? "Dead" : monsters[target].Hp.ToString();
             // 5. 출력
             Console.WriteLine($"{player.Name}의 공격!");
-            Console.WriteLine($"Lv.{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. [대미지 : {baseDamage}]" +
-                              (isCritical ? " - 치명타 공격!!" : ""));
-
+            Console.Write($"Lv.{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. ");
+            Console.ForegroundColor= ConsoleColor.Magenta;
+            Console.Write($"[대미지 : {baseDamage}]");
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine(isCritical ? " - 치명타 공격!!" : "");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine($"Lv.{monsters[target].level} {monsters[target].name}");
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine("0. 다음");
 
@@ -642,20 +655,27 @@ namespace TextRPG
         void DisplaySkillDamageUI(int target,int skillNum)
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Battle!!\n");
+            Console.ResetColor();
 
             int damage = player.PlayerDamage(player.skillDb[skillNum].Value);
+            int hpBefore = monsters[target].Hp; //플레이어 피해전 체력
+            monsters[target].Hp = Math.Max(0, monsters[target].Hp - damage);
+            int hpAfter = monsters[target].Hp;
 
             Console.WriteLine($"{player.Name}의 공격!");
-            Console.WriteLine($"Lv{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. " +
-                $"[대미지 : {damage}]");
+            Console.Write($"Lv{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine($"[대미지 : {damage}]");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine($"Lv{monsters[target].level} {monsters[target].name} ");
 
             int monsterHp = monsters[target].Hp - damage;
-
-            Console.WriteLine("HP {0} -> {1}", monsters[target].Hp, monsterHp <= 0 ? "Dead" : monsterHp);
-
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
+            Console.ResetColor();
             //대미지 입히는거 계산
             monsters[target].Hp = monsterHp;
 
@@ -697,7 +717,9 @@ namespace TextRPG
                 if (!monster.isDie())
                 {
                     Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine("Battle!!\n");
+                    Console.ResetColor();
 
                     int damage = monster.MonsterDamage(); //몬스터 고유 데미지
                     int hpBefore = player.Hp; //플레이어 피해전 체력
@@ -706,11 +728,15 @@ namespace TextRPG
 
                     // 4. 출력
                     Console.WriteLine($"Lv.{monster.level} {monster.name}의 공격!");
-                    Console.WriteLine($"{player.Name}을(를) 맞췄습니다. [대미지: {damage}]");
+                    Console.Write($"{player.Name}을(를) 맞췄습니다. ");
+                    Console.ForegroundColor= ConsoleColor.Magenta;
+                    Console.WriteLine($"[대미지: {damage}]");
+                    Console.ResetColor();
                     Console.WriteLine();
                     Console.WriteLine($"Lv.{player.Level} {player.Name}");
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
-
+                    Console.ResetColor();
                     Console.WriteLine();
                     Console.WriteLine("0. 다음");
 
@@ -737,8 +763,12 @@ namespace TextRPG
             int totalGetGold = 0; // 총합 획득 골드
 
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Battle!! - Result\n");
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Victory");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine($"던전에서 몬스터 {monsters.Length}마리를 잡았습니다.");
             Console.WriteLine();
@@ -760,7 +790,12 @@ namespace TextRPG
                 Console.WriteLine($"Lv.{player.Level - 1} -> Lv.{player.Level}");
             }
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"HP {player.Beforehp} -> {player.Hp}");
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"HP {player.Beforemp} -> {player.Mp}");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine("[획득 아이템]");
 
@@ -809,8 +844,12 @@ namespace TextRPG
         void DisplayLoseUI()
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Battle!! - Result\n");
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("You Lose");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine($"Lv.{player.Level} {player.Name}");
             Console.WriteLine($"HP {player.Maxhp} -> {player.Hp}");
