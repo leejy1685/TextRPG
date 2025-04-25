@@ -16,27 +16,27 @@ namespace TextRPG
 
     class Character
     {
-        public int Level { get; private set; }
-        public string Name { get; }
-        public Job job { get; set; }
-        public int Atk { get; set; }
-        public int Def { get; set; }
-        public int Hp { get; set; }
-        public int Mp { get; set; } // MP - 스킬 사용에 필요한 마나
+        public int Level { get; private set; }//레벨
+        public string Name { get; }//이름
+        public Job job { get; set; }//직업
+        public int Atk { get; set; }//공격력
+        public int Def { get; set; }//방어력
+        public int Hp { get; set; }//체력
+        public int Mp { get; set; } //마나
         public int Maxhp { get; set; } // 최대 hp
         public int Maxmp { get; set; } // 최대 mp
         public int Beforehp { get; set; } // 전투 시작 시점의 hp
         public int Beforemp { get; set; } // 전투 시작 시점의 mp
-        public int Gold { get; set; }
+        public int Gold { get; set; }//골드
 
-        public int Exp { get; private set; }
-        public int ExpBar { get; private set; }
+        public int Exp { get; private set; }//경험치
+        public int ExpBar { get; private set; }//경험치 바
 
-        public int ExtraAtk { get; private set; }
-        public int ExtraDef { get; private set; }
+        public int ExtraAtk { get; private set; }//장비 공격력
+        public int ExtraDef { get; private set; }//장비 방어력
 
-        public List<Item> Inventory = new List<Item>();
-        public Item[] EquipList = new Item[2];
+        public List<Item> Inventory = new List<Item>(); //인벤토리
+        public Item[] EquipList = new Item[2];  //장비 장착 리스트
 
         public Skill[] skillDb; // 스킬 DB
 
@@ -46,7 +46,7 @@ namespace TextRPG
             {
                 return Inventory.Count;
             }
-        }
+        }   //인벤토리 길이
 
         public Character(int level, string name, Job job, int mp, int gold)
         {
@@ -80,7 +80,7 @@ namespace TextRPG
             Gold = gold;
             Exp = 0;
             ExpBar = 10;
-        }
+        }//생성자
 
         public void DisplayCharacterInfo()
         {
@@ -102,7 +102,7 @@ namespace TextRPG
                     jobStr = "바바리안";
                     break;
             }
-            //Console.WriteLine($"{Name} {{ {jobStr} }}");
+
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(Name);
             Console.ResetColor();
@@ -112,7 +112,6 @@ namespace TextRPG
             Console.ResetColor();
             Console.WriteLine(" }");
 
-            //Console.WriteLine(ExtraAtk == 0 ? $"공격력 : {Atk}" : $"공격력 : {Atk} (+{ExtraAtk})");
             if (ExtraAtk == 0)
             {
                 Console.Write("공격력 : ");
@@ -134,7 +133,6 @@ namespace TextRPG
                 Console.WriteLine(")");
             }
 
-            //Console.WriteLine(ExtraDef == 0 ? $"방어력 : {Def}" : $"방어력 : {Def} (+{ExtraDef})");
             if (ExtraDef == 0)
             {
                 Console.Write("방어력 : ");
@@ -171,7 +169,7 @@ namespace TextRPG
             Console.Write(Gold);
             Console.ResetColor();
             Console.WriteLine(" G");
-        }
+        }//캐릭터 상태창
 
         public void DisplayInventory(bool showIdx, bool showPrice)
         {
@@ -182,21 +180,20 @@ namespace TextRPG
                 string displayEquipped = IsEquipped(targetItem) ? "[E]" : "";
 
                 string displayPrice = showPrice ? $"{targetItem.Price / 100 * 85} G" : "";
-                
-                //Console.WriteLine($"- {displayIdx}{displayEquipped} {targetItem.ItemInfoText()} {displayPrice}");
+
                 Console.Write($"- ");
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.Write(displayIdx);
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.Write(displayEquipped);
                 Console.ResetColor();
-                //Console.WriteLine($" {targetItem.ItemInfoText()} {displayPrice}");
+
                 Console.Write(" ");
                 targetItem.ItemInfoText();
                 Console.WriteLine($" {displayPrice}");
 
             }
-        }
+        }//인벤토리 아이템 확인
 
         public void EquipItem(Item item)
         {
@@ -237,29 +234,17 @@ namespace TextRPG
                     Def += ExtraDef;
                 }
             }
-        }
+        }//장비 장착
 
         public bool IsEquipped(Item item)
         {
             return EquipList.Contains(item);
-        }
-
-        public void BuyItem(Item item)
-        {
-            Gold -= item.Price;
-            Inventory.Add(item);
-        }
-
-        public void SellItem(Item item)
-        {
-            Gold += item.Price / 100 * 85;
-            Inventory.Remove(item);
-        }
+        }//해당 아이템 장착 여부
 
         public bool HasItem(Item item)
         {
             return Inventory.Contains(item);
-        }
+        }//아이템을 지니고 있는지 판단
 
         public bool LevelUp(Monster monster)
         {
@@ -291,9 +276,9 @@ namespace TextRPG
                 return true;
             }
             return false;
-        }
+        }//경험치 습득 혹은 레벨업
 
-        public void DisplayBattlePlayerInfo() // 전투 중 플레이어 정보 표시
+        public void DisplayBattlePlayerInfo()
         {
             string jobStr = "";
             switch (job)
@@ -315,9 +300,9 @@ namespace TextRPG
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"MP {Mp}/{Maxmp}");
             Console.ResetColor();
-        }
+        }// 전투 중 플레이어 정보 표시
 
-        public void SkillSet() // 스킬 목록
+        public void SkillSet()
         {
             skillDb = new Skill[]
             {
@@ -325,9 +310,9 @@ namespace TextRPG
                 new Skill("알파 스트라이크", 10, 2.0f, $"공격력 * 2 로 하나의 적을 공격합니다."),
                 new Skill("더블 스트라이크", 15, 1.5f, $"공격력 * 1.5 로 적을 랜덤으로 공격합니다.")
             };
-        }
+        }// 스킬 목록
 
-        public int PlayerDamage() // 몬스터가 입을 피해량 계산 (일반공격)
+        public int PlayerDamage() 
         {
             float damageRandom; // 1차적으로 계산된 데미지 (실수)
             int GetDamage; // 소숫점 이하 올림 처리된 데미지
@@ -341,9 +326,9 @@ namespace TextRPG
             GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
 
             return GetDamage; // 데미지 return
-        }
+        }// 몬스터가 입을 피해량 계산 (일반공격)
 
-        public int PlayerDamage(float skillValue) // 몬스터가 입을 피해량 계산 (스킬공격)
+        public int PlayerDamage(float skillValue) 
         {
             float damageRandom; // 1차적으로 계산된 데미지 (실수)
             int GetDamage; // 소숫점 이하 올림 처리된 데미지
@@ -357,9 +342,9 @@ namespace TextRPG
             GetDamage = (int)Math.Ceiling(damageRandom); // 랜덤값 올림 처리
 
             return GetDamage; // 데미지 return
-        }
+        }// 몬스터가 입을 피해량 계산 (스킬공격)
 
-        public bool isCrit() // 치명타 발동 여부 체크
+        public bool isCrit()
         {
             Random random = new Random(); // 랜덤 클래스 인스턴스 생성
             int critCheck = random.Next(1, 101);
@@ -371,15 +356,15 @@ namespace TextRPG
             {
                 return false;
             }
-        }
+        }// 치명타 발동 여부 체크
 
         public void beforeSave()
         {
             Beforehp = Hp;  //전투 시작 시점의 체력 저장
             Beforemp = Mp;  //전투 시작 시점의 마나 저장
-        }
+        }//전투 입장 전 체력 마나 체크
 
-        public bool isDie() // 플레이어 사망 여부 체크
+        public bool isDie() 
         {
             if (Hp <= 0)
             {
@@ -390,15 +375,15 @@ namespace TextRPG
             {
                 return false;
             }
-        }
+        }// 플레이어 사망 여부 체크
 
         public void recoveryMp()
         {
             Mp += 10;
             Mp = Mp >= Maxmp ? Maxmp : Mp;
-        }
+        }//마나 회복 메서드
 
-        public void UsePotion(Item item) // 포션 사용
+        public void UsePotion(Item item)
         {
             Hp += item.Value; // item value 값만큼 체력 회복
             if (Hp > Maxhp) // 현재 체력이 최대 체력을 초과할 경우
@@ -406,9 +391,9 @@ namespace TextRPG
                 Hp = Maxhp; // 현재 체력을 최대 체력으로 설정
             }
             Inventory.Remove(item); // 인벤토리에서 대상 아이템 - 포션 제거
-        }
+        }// 포션 사용
 
-        public int numberOfPotion() // 포션 개수 파악
+        public int numberOfPotion() 
         {
             int num = 0; // 포션 개수를 담을 변수
 
@@ -421,6 +406,6 @@ namespace TextRPG
             }
 
             return num; // 포션 개수 return
-        }
+        }// 포션 개수 파악
     }
 }

@@ -8,11 +8,11 @@ namespace TextRPG
 {
     class Item
     {
-        public string Name { get; }
-        public int Type { get; }
-        public int Value { get; }
-        public string Desc { get; }
-        public int Price { get; }
+        public string Name { get; }//이름
+        public int Type { get; }//아이템 타입 0 무기 1 방어구 2 포션
+        public int Value { get; }//아이템의 값 공격력, 방어력, 회복량
+        public string Desc { get; }//아이템 설명
+        public int Price { get; }//가격
 
         public string DisplayTypeText
         {
@@ -35,7 +35,7 @@ namespace TextRPG
                         break ;
                 }
             }
-        }
+        }//타입을 텍스트 화
 
         public Item(string name, int type, int value, string desc, int price)
         {
@@ -44,12 +44,12 @@ namespace TextRPG
             Value = value;
             Desc = desc;
             Price = price;
-        }
+        }//생성자
 
         public Item()
         {
 
-        }
+        }//생성자
 
         public void ItemInfoText()
         {
@@ -80,11 +80,7 @@ namespace TextRPG
                     Console.Write($"{Name}  |  {DisplayTypeText} +{Value}  |  {Desc}");
                     break;
             }
-        }
+        }//아이템 정보를 출력하는 메서드
 
-        //public string ItemInfoText() // 원본 메서드
-        //{
-        //    return $"{Name}  |  {DisplayTypeText} +{Value}  |  {Desc}";
-        //}
     }
 }
