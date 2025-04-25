@@ -36,9 +36,40 @@ namespace TextRPG
 
         }
 
-        public string ItemInfoText()
+        public void ItemInfoText()
         {
-            return $"{Name}  |  {DisplayTypeText} +{Value}  |  {Desc}";
+            switch (Type)
+            {
+                case 0: // 무기일 경우
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(Name);
+                    Console.ResetColor();
+                    Console.Write($"  |  {DisplayTypeText} +{Value}  |  {Desc}");
+                    break;
+
+                case 1: // 방어구일 경우
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.Write(Name);
+                    Console.ResetColor();
+                    Console.Write($"  |  {DisplayTypeText} +{Value}  |  {Desc}");
+                    break;
+
+                case 2: // 포션일 경우
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(Name);
+                    Console.ResetColor();
+                    Console.Write($"  |  {DisplayTypeText} +{Value}  |  {Desc}");
+                    break;
+
+                default: // 기본 값 - 색상 변환 X
+                    Console.Write($"{Name}  |  {DisplayTypeText} +{Value}  |  {Desc}");
+                    break;
+            }
         }
+
+        //public string ItemInfoText() // 원본 메서드
+        //{
+        //    return $"{Name}  |  {DisplayTypeText} +{Value}  |  {Desc}";
+        //}
     }
 }

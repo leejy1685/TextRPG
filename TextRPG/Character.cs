@@ -83,7 +83,11 @@ namespace TextRPG
 
         public void DisplayCharacterInfo()
         {
-            Console.WriteLine($"Lv. {Level:D2}");
+            Console.Write($"Lv. ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine($"{Level:D2}");
+            Console.ResetColor();
+
             string jobStr = "";
             switch (job)
             {
@@ -97,11 +101,68 @@ namespace TextRPG
                     jobStr = "바바리안";
                     break;
             }
-            Console.WriteLine($"{Name} {{ {jobStr} }}");
-            Console.WriteLine(ExtraAtk == 0 ? $"공격력 : {Atk}" : $"공격력 : {Atk} (+{ExtraAtk})");
-            Console.WriteLine(ExtraDef == 0 ? $"방어력 : {Def}" : $"방어력 : {Def} (+{ExtraDef})");
-            Console.WriteLine($"체력 : {Hp}");
-            Console.WriteLine($"Gold : {Gold} G");
+            //Console.WriteLine($"{Name} {{ {jobStr} }}");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(Name);
+            Console.ResetColor();
+            Console.Write(" { ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(jobStr);
+            Console.ResetColor();
+            Console.WriteLine(" }");
+
+            //Console.WriteLine(ExtraAtk == 0 ? $"공격력 : {Atk}" : $"공격력 : {Atk} (+{ExtraAtk})");
+            if (ExtraAtk == 0)
+            {
+                Console.Write("공격력 : ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine(Atk);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.Write("공격력 : ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write(Atk);
+                Console.ResetColor();
+
+                Console.Write(" (+");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write(ExtraAtk);
+                Console.WriteLine(")");
+            }
+
+            //Console.WriteLine(ExtraDef == 0 ? $"방어력 : {Def}" : $"방어력 : {Def} (+{ExtraDef})");
+            if (ExtraDef == 0)
+            {
+                Console.Write("방어력 : ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine(Def);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.Write("방어력 : ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write(Def);
+                Console.ResetColor();
+
+                Console.Write(" (+");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write(ExtraDef);
+                Console.WriteLine(")");
+            }
+
+            Console.Write($"체력 : ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(Hp);
+            Console.ResetColor();
+
+            Console.Write($"Gold : ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write(Gold);
+            Console.ResetColor();
+            Console.WriteLine(" G");
         }
 
         public void DisplayInventory(bool showIdx, bool showPrice)
@@ -109,11 +170,23 @@ namespace TextRPG
             for (int i = 0; i < Inventory.Count; i++)
             {
                 Item targetItem = Inventory[i];
-
                 string displayIdx = showIdx ? $"{i + 1} " : "";
                 string displayEquipped = IsEquipped(targetItem) ? "[E]" : "";
+
                 string displayPrice = showPrice ? $"{targetItem.Price / 100 * 85} G" : "";
-                Console.WriteLine($"- {displayIdx}{displayEquipped} {targetItem.ItemInfoText()} {displayPrice}");
+                
+                //Console.WriteLine($"- {displayIdx}{displayEquipped} {targetItem.ItemInfoText()} {displayPrice}");
+                Console.Write($"- ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write(displayIdx);
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.Write(displayEquipped);
+                Console.ResetColor();
+                //Console.WriteLine($" {targetItem.ItemInfoText()} {displayPrice}");
+                Console.Write(" ");
+                targetItem.ItemInfoText();
+                Console.WriteLine($" {displayPrice}");
+
             }
         }
 
@@ -269,7 +342,7 @@ namespace TextRPG
         {
             Random random = new Random(); // 랜덤 클래스 인스턴스 생성
             int critCheck = random.Next(1, 101);
-            if(critCheck <= 15) // 치명타 발생 : 랜덤값이 1 ~ 15
+            if (critCheck <= 15) // 치명타 발생 : 랜덤값이 1 ~ 15
             {
                 return true;
             }
@@ -317,9 +390,9 @@ namespace TextRPG
         {
             int num = 0; // 포션 개수를 담을 변수
 
-            foreach(Item item in Inventory) // 인벤토리 내 아이템 체크
+            foreach (Item item in Inventory) // 인벤토리 내 아이템 체크
             {
-                if(item.Type == 2) // 아이템의 타입이 2라면 = 포션이라면
+                if (item.Type == 2) // 아이템의 타입이 2라면 = 포션이라면
                 {
                     num += 1; // 개수 + 1
                 }
