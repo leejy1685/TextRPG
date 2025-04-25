@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace TextRPG
 {
+    [Serializable]
     class Item
     {
-        public string Name { get; }//이름
-        public int Type { get; }//아이템 타입 0 무기 1 방어구 2 포션
-        public int Value { get; }//아이템의 값 공격력, 방어력, 회복량
-        public string Desc { get; }//아이템 설명
-        public int Price { get; }//가격
+        public string Name { get; set; }//이름
+        public int Type { get; set; }//아이템 타입 0 무기 1 방어구 2 포션
+        public int Value { get; set; }//아이템의 값 공격력, 방어력, 회복량
+        public string Desc { get; set; }//아이템 설명
+        public int Price { get; set; }//가격
 
         public string DisplayTypeText
         {

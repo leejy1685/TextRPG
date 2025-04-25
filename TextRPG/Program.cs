@@ -15,8 +15,7 @@ namespace TextRPG
         {
             //저장 데이터 로드 후 실행
             GameManager gameManager = new GameManager();
-            //gameManager.loadData();
-            gameManager.SetData();
+            gameManager.LoadData();
             gameManager.DisplayMainUI();
 
         }

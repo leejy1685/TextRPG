@@ -348,14 +348,7 @@ namespace TextRPG
         {
             Random random = new Random(); // 랜덤 클래스 인스턴스 생성
             int critCheck = random.Next(1, 101);
-            if (critCheck <= 15) // 치명타 발생 : 랜덤값이 1 ~ 15
-            {
-                return true;
-            }
-            else // 치명타 미발생 : 랜덤값이 16 ~ 100
-            {
-                return false;
-            }
+            return critCheck <= 15; // 치명타 발생 : 랜덤값이 1 ~ 15
         }// 치명타 발동 여부 체크
 
         public void beforeSave()

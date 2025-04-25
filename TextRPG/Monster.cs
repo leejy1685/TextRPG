@@ -35,7 +35,7 @@ namespace TextRPG
             this.Hp = other.Hp;
             this.item = other.item;
             this.gold = other.gold;
-        }//보사 생성자
+        }//복사 생성자
 
         public int MonsterDamage() 
         {

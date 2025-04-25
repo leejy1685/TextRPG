@@ -1,1 +1,0 @@
-{"Inventory":[{"Name":"수련자의 갑옷","Type":1,"Value":5,"Desc":"수련에 도움을 주는 갑옷입니다. ","Price":1000,"DisplayTypeText":"방어력"}],"EquipList":[null,{"Name":"수련자의 갑옷","Type":1,"Value":5,"Desc":"수련에 도움을 주는 갑옷입니다. ","Price":1000,"DisplayTypeText":"방어력"}],"Level":2,"Name":"스파르타","Job":"전사","Atk":10,"Def":5,"Hp":60,"Gold":3703,"Exp":1,"ExpBar":2,"ExtraAtk":0,"ExtraDef":5,"InventoryCount":1}

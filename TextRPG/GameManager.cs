@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -28,13 +29,12 @@ namespace TextRPG
         bool equipQuest = false;
 
         //스테이지
-        private int stage = 1; // 기본 스테이지 1로 시작
+        public int stage = 1; // 기본 스테이지 1로 시작
 
         public GameManager()    {}  //생성자
 
-        public void SetData()   //게임 첫 시작시 생성되는 정보들
+        public void SetData()   //게임 시작 시 생성되는 정보들
         {
-            player = new Character(1, nameCreate(), jobSelect(), 50, 1500);  //캐릭터 생성
             player.SkillSet();  //스킬 저장
             itemDb = new Item[] //아이템 DB
             {
@@ -56,10 +56,16 @@ namespace TextRPG
                     new Monster(8,"어스름 늑대",12,30,itemDb[6],500),
                     new Monster(10,"야스오",30,100,itemDb[7],600)
             };
+        }
+
+        void createData()   //처음 게임 시작 시 생성되는 데이터
+        {
+            player = new Character(1, nameCreate(), jobSelect(), 50, 1500);  //캐릭터 생성
+            SetData();
             //게임 시작 시 포션 3개 지급
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 3; i++)
             {
-                player.Inventory.Add(itemDb[i]);
+                player.Inventory.Add(itemDb[0]);
             }
         }
 
@@ -220,12 +226,15 @@ namespace TextRPG
             Console.ResetColor();
             Console.WriteLine("▶▶   회 복   ◀◀");
 
-            //Console.WriteLine("0. 저장 후 종료");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("▶▶ 저장 종료 ◀◀");
             Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
 
-            int command = inputCommand(1, 5);
+            int command = inputCommand(0, 5);
 
             switch (command)
             {
@@ -248,14 +257,11 @@ namespace TextRPG
                 case 5:
                     DisplayPotionUI();  //물약
                     break;
-                    //case 0:
-                    //    saveData();
-                    //    return;
-                    //    break;
+                case 0:
+                    SaveData();
+                    Environment.Exit(0);
+                    break;
             }
-
-
-
         }
 
         void DisplayStatUI() //캐릭터의 정보 보기
@@ -547,34 +553,42 @@ namespace TextRPG
             Console.WriteLine("Battle!!\n");
             Console.ResetColor();
 
-            // 1. 치명타 여부 판단
-            bool isCritical = player.isCrit();
-            // 2. 기본 데미지 계산 (치명타 포함)
-            int baseDamage = player.PlayerDamage();
-            if (isCritical)
+
+            if (monsters[target].isEvasion()) // 몬스터의 회피 성공 시
             {
-                baseDamage = (int)(baseDamage * 1.6f); // 치명타일 경우 1.6배
+                Console.WriteLine($"Lv{monsters[target].level} {monsters[target].name} 을(를) 공격했지만 아무일도 일어나지 않았습니다.\n");
             }
-            // 3. 체력 변화 전 상태 저장
-            int hpBefore = monsters[target].Hp;
-            // 4. 데미지 적용
-            monsters[target].Hp = Math.Max(0, monsters[target].Hp - baseDamage);
-            string hpAfter = monsters[target].isDie() ? "Dead" : monsters[target].Hp.ToString();
-            // 5. 출력
-            Console.WriteLine($"{player.Name}의 공격!");
-            Console.Write($"Lv.{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. ");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write($"[대미지 : {baseDamage}]");
-            Console.ResetColor();
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine(isCritical ? " - 치명타 공격!!" : "");
-            Console.ResetColor();
-            Console.WriteLine();
-            Console.WriteLine($"Lv.{monsters[target].level} {monsters[target].name}");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
-            Console.ResetColor();
-            Console.WriteLine();
+            else
+            {
+                // 1. 치명타 여부 판단
+                bool isCritical = player.isCrit();
+                // 2. 기본 데미지 계산 (치명타 포함)
+                int baseDamage = player.PlayerDamage();
+                if (isCritical)
+                {
+                    baseDamage = (int)(baseDamage * 1.6f); // 치명타일 경우 1.6배
+                }
+                // 3. 체력 변화 전 상태 저장
+                int hpBefore = monsters[target].Hp;
+                // 4. 데미지 적용
+                monsters[target].Hp = Math.Max(0, monsters[target].Hp - baseDamage);
+                string hpAfter = monsters[target].isDie() ? "Dead" : monsters[target].Hp.ToString();
+                // 5. 출력
+                Console.WriteLine($"{player.Name}의 공격!");
+                Console.Write($"Lv.{monsters[target].level} {monsters[target].name} 을(를) 맞췄습니다. ");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write($"[대미지 : {baseDamage}]");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(isCritical ? " - 치명타 공격!!" : "");
+                Console.ResetColor();
+                Console.WriteLine();
+                Console.WriteLine($"Lv.{monsters[target].level} {monsters[target].name}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"HP {hpBefore} -> {hpAfter}");
+                Console.ResetColor();
+                Console.WriteLine();
+            }
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.Write("0.");
             Console.ResetColor();
@@ -1291,6 +1305,37 @@ namespace TextRPG
             DisplayEnemyPhaseUI();
         }// 스킬 2
 
+        void SaveData()
+        {
+            string userData = JsonConvert.SerializeObject(player);
+            File.WriteAllText(path + "\\UserData.json", userData);
+
+            string stageData = JsonConvert.SerializeObject(stage);
+            File.WriteAllText(path + "\\StageData.json", stageData);
+
+        }//데이터 저장 메서드
+
+        public void LoadData()
+        {
+            if (!File.Exists(path + "\\UserData.json"))
+            {
+                createData();
+                return;
+            }
+
+            string userLData = File.ReadAllText(path + "\\UserData.json");
+            Character userLoadData = JsonConvert.DeserializeObject<Character>(userLData);
+            player = userLoadData;
+
+            string stageData = File.ReadAllText(path + "\\StageData.json");
+            int stageD = JsonConvert.DeserializeObject<int>(stageData);
+            stage = stageD;
+
+
+
+            SetData();
+
+        }//데이터 불러오기 메서드
 
 
     }
