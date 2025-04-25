@@ -18,7 +18,22 @@ namespace TextRPG
         {
             get
             {
-                return Type == 0 ? "공격력" : "방어력";
+                switch (Type)
+                {
+                    case 0:
+                        return "공격력";
+                        break;
+                    case 1:
+                        return "방어력";
+                        break;
+                    case 2:
+                        return "회복량";
+                        break;
+
+                    default:
+                        return "";
+                        break ;
+                }
             }
         }
 

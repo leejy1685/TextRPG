@@ -26,6 +26,7 @@ namespace TextRPG
         public int Maxhp { get; set; } // 최대 hp
         public int Maxmp { get; set; } // 최대 mp
         public int Beforehp { get; set; } // 전투 시작 시점의 hp
+        public int Beforemp { get; set; } // 전투 시작 시점의 mp
         public int Gold { get; set; }
 
         public int Exp { get; private set; }
@@ -129,6 +130,7 @@ namespace TextRPG
                 Console.Write(" (+");
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.Write(ExtraAtk);
+                Console.ResetColor();
                 Console.WriteLine(")");
             }
 
@@ -150,12 +152,18 @@ namespace TextRPG
                 Console.Write(" (+");
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.Write(ExtraDef);
+                Console.ResetColor();
                 Console.WriteLine(")");
             }
 
             Console.Write($"체력 : ");
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine(Hp);
+            Console.ResetColor();
+
+            Console.Write($"마나 : ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(Mp);
             Console.ResetColor();
 
             Console.Write($"Gold : ");
@@ -192,6 +200,13 @@ namespace TextRPG
 
         public void EquipItem(Item item)
         {
+            if (item.Type >= 2)
+            {
+                Console.WriteLine("장착할 수 없는 아이템입니다.");
+                Console.ReadLine();
+                return;
+            }
+
             if (IsEquipped(item))
             {
                 if (item.Type == 0)
@@ -293,7 +308,13 @@ namespace TextRPG
                     jobStr = "바바리안";
                     break;
             }
-            Console.WriteLine($"Lv.{Level} {Name} ({jobStr})\nHP {Hp}/{Maxhp}\nMP {Mp}/{Maxmp}");
+            Console.WriteLine($"Lv.{Level} {Name} ({jobStr})");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"HP {Hp}/{Maxhp}");
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"MP {Mp}/{Maxmp}");
+            Console.ResetColor();
         }
 
         public void SkillSet() // 스킬 목록
@@ -352,9 +373,10 @@ namespace TextRPG
             }
         }
 
-        public void beforeHpSave()
+        public void beforeSave()
         {
-            Beforehp = Hp; // 전투 시작 시점의 체력 저장
+            Beforehp = Hp;  //전투 시작 시점의 체력 저장
+            Beforemp = Mp;  //전투 시작 시점의 마나 저장
         }
 
         public bool isDie() // 플레이어 사망 여부 체크

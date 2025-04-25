@@ -294,7 +294,7 @@ namespace TextRPG
                 Item curItem = itemDb[i];
 
                 string displayPrice = (player.HasItem(curItem) ? "구매완료" : $"{curItem.Price} G");
-                Console.WriteLine($"- {curItem.ItemInfoText()}  |  {displayPrice}");
+                //Console.WriteLine($"- {curItem.ItemInfoText()}  |  {displayPrice}");
             }
 
             Console.WriteLine();
@@ -338,7 +338,7 @@ namespace TextRPG
                 Item curItem = itemDb[i];
 
                 string displayPrice = (player.HasItem(curItem) ? "구매완료" : $"{curItem.Price} G");
-                Console.WriteLine($"- {i + 1} {curItem.ItemInfoText()}  |  {displayPrice}");
+                //Console.WriteLine($"- {i + 1} {curItem.ItemInfoText()}  |  {displayPrice}");
             }
 
             Console.WriteLine();
