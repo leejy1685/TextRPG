@@ -169,7 +169,7 @@ namespace TextRPG
         {
             return Inventory.Contains(item);
         }
-
+        
         public bool LevelUp(Monster monster)
         {
             // 경험치 획득량 계산 : 몬스터들의 레벨을 합친 값
@@ -292,7 +292,32 @@ namespace TextRPG
         {
             Beforehp = Hp; // 전투 시작 시점의 체력 저장
         }
+        public void UsePotion(Item item) // 포션 사용
+        {
+            Hp += item.Value; // item value 값만큼 체력 회복
+            if (Hp > Maxhp) // 현재 체력이 최대 체력을 초과할 경우
+            {
+                Hp = Maxhp; // 현재 체력을 최대 체력으로 설정
+            }
+            Inventory.Remove(item); // 인벤토리에서 대상 아이템 - 포션 제거
+        }
 
+        public int numberOfPotion() // 포션 개수 파악
+        {
+            int num = 0; // 포션 개수를 담을 변수
+
+            foreach (Item item in Inventory) // 인벤토리 내 아이템 체크
+            {
+                if (item.Type == 2) // 아이템의 타입이 2라면 = 포션이라면
+                {
+                    num += 1; // 개수 + 1
+                }
+            }
+
+            return num; // 포션 개수 return
+        }
     }
+
+
 
 }

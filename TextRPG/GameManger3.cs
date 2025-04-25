@@ -26,7 +26,8 @@ namespace TextRPG
         //미니언 퀘스트
         int minionKill = 0;
         bool minionQuest = false;
-
+        //장비 퀘스트
+        bool equipQuest = false;
         private Random random;
 
         public GameManager()
@@ -87,15 +88,32 @@ namespace TextRPG
         string nameCreate()
         {
             Console.Clear();
-
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
-            Console.WriteLine("원하시는 이름을 설정해 주세요\n");
+            Console.ResetColor();
 
+            Console.WriteLine("원하시는 이름을 설정해 주세요\n");
             string name = Console.ReadLine();
 
+            Console.WriteLine();
+            Console.Write("입력하신 이름은 ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(name);
+            Console.ResetColor();
+            Console.WriteLine(" 입니다.");
 
-            Console.WriteLine("\n입력하신 이름은 {0} 입니다.\n", name);
-            Console.WriteLine("1. 저장\n2. 취소\n");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("1");
+            Console.ResetColor();
+            Console.WriteLine(". 저장");
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("2");
+            Console.ResetColor();
+            Console.WriteLine(". 취소");
+
+            Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해 주세요.");
 
             int command = inputCommand(1, 2);
@@ -149,16 +167,48 @@ namespace TextRPG
         public void DisplayMainUI()
         {
 
+            //1. 상태보기 2. 인벤토리 3. 퀘스트 4.던전입장 (스테이지 표기는 다른 색) 5. 휴식하기
+
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
+
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.");
+
+            Console.ResetColor();
             Console.WriteLine();
-            Console.WriteLine("1. 상태 보기");
-            Console.WriteLine("2. 인벤토리");
-            Console.WriteLine("3. 퀘스트");
-            //Console.WriteLine("4. 던전입장");
-            Console.WriteLine($"4. 던전입장 ( Stage {stage} )");
-            Console.WriteLine("5. 휴식하기");
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("1. ");
+            Console.ResetColor();
+            Console.WriteLine("▶▶ 상태 보기 ◀◀");
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("2. ");
+            Console.ResetColor();
+            Console.WriteLine("▶▶  인벤토리 ◀◀");
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("3. ");
+            Console.ResetColor();
+            Console.WriteLine("▶▶   퀘스트  ◀◀");
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("4. ");
+            Console.ResetColor();
+            Console.Write("▶▶ 던전 입장 ◀◀ ( ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write("Stage ");
+            Console.Write(stage);
+            Console.ResetColor();
+            Console.WriteLine(" )");
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("5. ");
+            Console.ResetColor();
+            Console.WriteLine("▶▶ 휴식 하기 ◀◀");
+
             //Console.WriteLine("0. 저장 후 종료");
             Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
@@ -177,7 +227,7 @@ namespace TextRPG
                     break;
 
                 case 3:
-                    DisplayQuesUI();//퀘스트 목록
+                    DisplayQuestUI();//퀘스트 목록
                     // MinionQuesUI();
                     //DisplayShopUI();//상점 열기
                     break;
@@ -187,7 +237,7 @@ namespace TextRPG
                     DisplayBattleUI();//던전 열기
                     break;
                 case 5:
-                    DisplayRestUI();//휴식
+                    DisplayPotionUI();//포션
                     break;
                     //case 0:
                     //    saveData();
@@ -811,17 +861,26 @@ namespace TextRPG
             }
         }
 
-        void DisplayQuesUI() //2025.04.24 퀘스트 UI
+        void DisplayQuestUI()
         {
             Console.Clear();
-            Console.WriteLine("[Quest!!]\n");
-            Console.WriteLine(" 1. 마을을 위협하는 미니언 처치");
-            Console.WriteLine(" 2. 장비를 장착해보자");
-            Console.WriteLine(" 3. 더욱 더 강해지기!\n");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("[Quest!!]");
+            Console.ResetColor();
+            Console.WriteLine();
+
+            // 퀘스트 상태에 따른 색상 표시 Yellow/Green
+            DisplayQuestStatus(1, "마을을 위협하는 미니언 처치", minionQuest, minionKill >= 5);
+            DisplayQuestStatus(2, "장비를 장착해보자", false, false); // 미구현
+            DisplayQuestStatus(3, "더욱 더 강해지기!", false, player.Level >= 5);
+
+            Console.WriteLine();
+            Console.WriteLine("나가기. 0");
+            Console.WriteLine();
             Console.WriteLine("원하시는 퀘스트를 선택해주세요.");
             Console.Write(">> ");
 
-            int choice = inputCommand(1, 3);
+            int choice = inputCommand(0, 3);
 
             switch (choice)
             {
@@ -829,18 +888,39 @@ namespace TextRPG
                     MinionQuesUI();
                     break;
                 case 2:
-                   // EquipQuestUI();
+                    EquipQuestUI();
                     break;
                 case 3:
                     StrongQuestUI();
                     break;
+                case 0:
+                    DisplayMainUI();
+                    break;
             }
         }
 
-        void MinionQuesUI()
+        void DisplayQuestStatus(int index, string questName, bool isAccepted, bool isComplete)
+        {
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write($"{index}. ");
+            if (isComplete)
+                Console.ForegroundColor = ConsoleColor.Green;
+            else if (isAccepted)
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            else
+                Console.ResetColor();
+
+            Console.WriteLine(questName);
+            Console.ResetColor();
+        }
+
+        void MinionQuesUI() //미니언 퀘스트
         {
             Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Quest!!");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine("마을을 위협하는 미니언 처치");
             Console.WriteLine();
@@ -848,22 +928,63 @@ namespace TextRPG
             Console.WriteLine("마을주민들의 안전을 위해서라도 저것들 수를 좀 줄여야 한다고!");
             Console.WriteLine("자네가 좀 처치해주게!");
             Console.WriteLine();
-            Console.WriteLine($"- 미니언 5마리 처치 ({minionKill}/5)");
+
+            Console.Write("- 미니언 5마리 처치 (");
+            Console.ForegroundColor = minionKill >= 5 ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.Write($"{minionKill}");
+            Console.ResetColor();
+            Console.WriteLine("/5)");
             Console.WriteLine();
+
             Console.WriteLine("- 보상 -");
-            Console.WriteLine($"{itemDb[1].Name} x 1");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(itemDb[1].Name);
+            Console.ResetColor();
+            Console.Write(" x ");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine("1");
+            Console.ResetColor();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("5G");
+            Console.ResetColor();
             Console.WriteLine();
+
             if (minionQuest)
             {
-                Console.WriteLine("1. 보상 받기");
-                Console.WriteLine("2. 돌아가기");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("1. ");
+                Console.ResetColor();
+
+                if (minionKill >= 5)
+                    Console.ForegroundColor = ConsoleColor.Green;
+                else
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("보상 받기");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("2. ");
+                Console.ResetColor();
+                Console.WriteLine("돌아가기");
             }
             else
             {
-                Console.WriteLine("1. 수락");
-                Console.WriteLine("2. 거절");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("1. ");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("수락");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("2. ");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("거절");
+                Console.ResetColor();
             }
+
             Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
@@ -880,14 +1001,17 @@ namespace TextRPG
                             minionKill = 0;
                             player.Inventory.Add(itemDb[1]);
                             player.Gold += 5;
+
+                            Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine("퀘스트 클리어!!");
+                            Console.ResetColor();
                             Console.ReadLine();
                         }
                         MinionQuesUI();
                         break;
+
                     case 2:
                         DisplayMainUI();
-                        //DisplayQuestUI();
                         break;
                 }
             }
@@ -899,28 +1023,169 @@ namespace TextRPG
                         minionQuest = true;
                         MinionQuesUI();
                         break;
+
                     case 2:
                         DisplayMainUI();
-                        //DisplayQuestUI();
                         break;
                 }
             }
         }
 
-        void StrongQuestUI() //레벨업 퀘스트 //날리기
+        void EquipQuestUI()
         {
             Console.Clear();
-            Console.WriteLine("Quest!!\n");
-            Console.WriteLine("더욱 더 강해지기");
 
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Quest!!");
+            Console.ResetColor();
+            Console.WriteLine();
+            Console.WriteLine("장비를 장착해보자");
+            Console.WriteLine();
+            Console.WriteLine("아니? 자네 그것도 무기라고 들고 댕기나?");
+            Console.WriteLine("저기 칼날 부리만 잡아도 낡은 검이 나오니 그거라도 들고 댕기게");
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write($"{itemDb[5].Name} 장착 : ");
+            Console.ResetColor();
+            Console.Write("(");
+            Console.ForegroundColor = player.IsEquipped(itemDb[5]) ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.Write(player.IsEquipped(itemDb[5]));
+            Console.ResetColor();
+            Console.WriteLine(")");
+            Console.WriteLine();
+
+            Console.WriteLine("- 보상 -");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("포션");
+            Console.ResetColor();
+            Console.Write(" x ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("3");
+            Console.ResetColor();
+            Console.WriteLine();
+
+            if (equipQuest)
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("1. ");
+                Console.ResetColor();
+
+                Console.ForegroundColor = player.IsEquipped(itemDb[5]) ? ConsoleColor.Green : ConsoleColor.DarkGray;
+                Console.WriteLine("보상 받기");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("2. ");
+                Console.ResetColor();
+                Console.WriteLine("돌아가기");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("1. ");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("수락");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("2. ");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Red; // 수정: 더 잘 보이는 반대 색상으로
+                Console.WriteLine("거절");
+                Console.ResetColor();
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+
+            int command = inputCommand(1, 2);
+
+            if (equipQuest)
+            {
+                switch (command)
+                {
+                    case 1:
+                        if (player.IsEquipped(itemDb[5]))
+                        {
+                            equipQuest = false;
+                            player.Inventory.Add(itemDb[0]);
+                            player.Inventory.Add(itemDb[0]);
+                            player.Inventory.Add(itemDb[0]);
+
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("퀘스트 클리어!!");
+                            Console.ResetColor();
+                            Console.ReadLine();
+                        }
+                        EquipQuestUI();
+                        break;
+                    case 2:
+                        DisplayQuestUI();
+                        break;
+                }
+            }
+            else
+            {
+                switch (command)
+                {
+                    case 1:
+                        equipQuest = true;
+                        EquipQuestUI();
+                        break;
+                    case 2:
+                        DisplayQuestUI();
+                        break;
+                }
+            }
+        } //장착 퀘스트
+
+        void StrongQuestUI() // 레벨업 퀘스트
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Quest!!\n");
+            Console.ResetColor();
+
+            Console.WriteLine("더욱 더 강해지기\n");
             Console.WriteLine("자네, 강해지고 싶지 않나?");
             Console.WriteLine("레벨 5만 되어도 새로운 힘을 얻을 수 있다네!\n");
 
-            Console.WriteLine($"- 현재 레벨 : {player.Level} / 5");
-            Console.WriteLine("- 보상 : 질풍 검 x1\n");
+            Console.Write("- 현재 레벨 : ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(player.Level);
+            Console.ResetColor();
+            Console.WriteLine(" / 5");
 
-            Console.WriteLine("1. 보상 받기");
-            Console.WriteLine("2. 나가기\n");
+            Console.WriteLine("- 보상 : ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("질풍 검");
+            Console.ResetColor();
+            Console.Write(" x ");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine("1\n");
+            Console.ResetColor();
+
+            // 선택지 색상
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("1. ");
+            Console.ResetColor();
+
+            if (player.Level >= 5)
+                Console.ForegroundColor = ConsoleColor.Green; // 퀘스트 완료
+            else
+                Console.ForegroundColor = ConsoleColor.DarkGray; // 퀘스트 미완료
+            Console.WriteLine("보상 받기");
+            Console.ResetColor();
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("2. ");
+            Console.ResetColor();
+            Console.WriteLine("나가기\n");
+
+            Console.ResetColor();
+
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
             int command = inputCommand(1, 2);
@@ -931,23 +1196,27 @@ namespace TextRPG
                     if (player.Level >= 5)
                     {
                         player.Inventory.Add(itemDb[7]); // 질풍 검 보상 지급
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("퀘스트 클리어!!");
+                        Console.ResetColor();
                         Console.ReadLine();
                         StrongQuestUI();
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("레벨이 부족합니다! 더 성장하세요!");
+                        Console.ResetColor();
                         Console.ReadLine();
                         StrongQuestUI();
                     }
                     break;
+
                 case 2:
-                    DisplayQuesUI();
+                    DisplayQuestUI();
                     break;
             }
         }
-
 
         void CheckMinionQuest(Monster monster)
         {
@@ -958,15 +1227,42 @@ namespace TextRPG
             }
         }
 
-        void DisplayRestUI()
+        void DisplayPotionUI()
         {
             Console.Clear();
 
-            Console.WriteLine("휴식하기");
-            Console.WriteLine($"500 G 를 내면 체력을 회복 할 수 있습니다. (보유 골드 : {player.Gold} G)");
+            // 제목
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("회복");
+            Console.ResetColor();
+
+            // 포션 설명
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("포션");
+            Console.ResetColor();
+            Console.Write("을 사용하면 체력을 ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("30");
+            Console.ResetColor();
+            Console.Write(" 회복 할 수 있습니다. (남은 포션 : ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write(player.numberOfPotion());
+            Console.ResetColor();
+            Console.WriteLine(" )");
+
             Console.WriteLine();
-            Console.WriteLine("1. 휴식 하기");
-            Console.WriteLine("0. 나가기");
+
+            // 선택지 출력
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("1. ");
+            Console.ResetColor();
+            Console.WriteLine("사용하기");
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("0. ");
+            Console.ResetColor();
+            Console.WriteLine("나가기");
+
             Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
@@ -978,22 +1274,12 @@ namespace TextRPG
                     DisplayMainUI();
                     break;
                 case 1:
-                    if (player.Gold >= 500)
-                    {
-                        player.Gold -= 500;
-                        player.Hp = 100;
-                        Console.WriteLine("휴식을 완료했습니다.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Gold 가 부족합니다.");
-                    }
-                    Console.ReadLine();
-                    DisplayRestUI();
+                    player.UsePotion(itemDb[0]);
+                    DisplayPotionUI();
                     break;
             }
-
         }
+
 
         int inputCommand(int min, int max)
         {
