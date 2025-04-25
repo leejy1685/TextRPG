@@ -24,6 +24,9 @@ namespace TextRPG
         int minionKill = 0;
         bool minionQuest = false;
 
+        //장비 퀘스트
+        bool equipQuest = false;
+
         //스테이지
         private int stage = 1; // 기본 스테이지 1로 시작
 
@@ -67,6 +70,7 @@ namespace TextRPG
             {
                 player.Inventory.Add(itemDb[0]);
             }
+            player.Inventory.Add(itemDb[5]);
         }
 
         public Monster[] createMonsters()
@@ -705,7 +709,6 @@ namespace TextRPG
 
         }
 
-
         void DisplayEnemyPhaseUI()
         {
             //캐릭터 마나 회복, 캐릭터가 여러번 마나회복을
@@ -752,8 +755,6 @@ namespace TextRPG
             // 모든 몬스터(살아있는 기준)가 공격 후 다시 공격 기회
             DisplayBattleUI();
         }
-
-
         void DisplayVictoryUI()
         {
             //캐릭터 마나 회복, 캐릭터가 여러번 마나회복을
@@ -840,7 +841,6 @@ namespace TextRPG
                     break;
             }
         }
-
         void DisplayLoseUI()
         {
             Console.Clear();
@@ -888,7 +888,7 @@ namespace TextRPG
                     MinionQuestUI();
                     break;
                 case 2:
-                    // EquipQuestUI();
+                    EquipQuestUI();
                     break;
                 case 3:
                     StrongQuestUI();
@@ -944,8 +944,7 @@ namespace TextRPG
                         MinionQuestUI();
                         break;
                     case 2:
-                        DisplayMainUI();
-                        //DisplayQuestUI();
+                        DisplayQuestUI();
                         break;
                 }
             }
@@ -958,8 +957,7 @@ namespace TextRPG
                         MinionQuestUI();
                         break;
                     case 2:
-                        DisplayMainUI();
-                        //DisplayQuestUI();
+                        DisplayQuestUI();
                         break;
                 }
             }
@@ -971,6 +969,72 @@ namespace TextRPG
                 monster.isDie())
             {
                 minionKill++;
+            }
+        }
+
+        void EquipQuestUI()
+        {
+            Console.Clear();
+            Console.WriteLine("Quest!!");
+            Console.WriteLine();
+            Console.WriteLine("장비를 장착해보자");
+            Console.WriteLine();
+            Console.WriteLine("아니? 자네 그것도 무기라고 들고 댕기나?");
+            Console.WriteLine("저기 칼날 부리만 잡아도 낡은 검이 나오니 그거라도 들고 댕기게");
+            Console.WriteLine();
+            Console.WriteLine($"{itemDb[5].Name} 장착 : ({player.IsEquipped(itemDb[5])})");
+            Console.WriteLine();
+            Console.WriteLine("- 보상 -");
+            Console.WriteLine($"포션 x 3");
+            Console.WriteLine();
+            if (equipQuest)
+            {
+                Console.WriteLine("1. 보상 받기");
+                Console.WriteLine("2. 돌아가기");
+            }
+            else
+            {
+                Console.WriteLine("1. 수락");
+                Console.WriteLine("2. 거절");
+            }
+            Console.WriteLine();
+            Console.WriteLine("원하시는 행동을 입력해주세요.");
+
+            int command = inputCommand(1, 2);
+
+            if (equipQuest)
+            {
+                switch (command)
+                {
+                    case 1:
+                        if (player.IsEquipped(itemDb[5]))
+                        {
+                            equipQuest = false;
+                            player.Inventory.Add(itemDb[0]);
+                            player.Inventory.Add(itemDb[0]);
+                            player.Inventory.Add(itemDb[0]);
+                            Console.WriteLine("퀘스트 클리어!!");
+                            Console.ReadLine();
+                        }
+                        EquipQuestUI();
+                        break;
+                    case 2:
+                        DisplayQuestUI();
+                        break;
+                }
+            }
+            else
+            {
+                switch (command)
+                {
+                    case 1:
+                        equipQuest = true;
+                        EquipQuestUI();
+                        break;
+                    case 2:
+                        DisplayQuestUI();
+                        break;
+                }
             }
         }
 

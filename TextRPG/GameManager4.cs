@@ -149,7 +149,7 @@ namespace TextRPG
                     DisplayShopUI();//상점 열기
                     break;
                 case 4:
-                    player.beforeHpSave(); // 전투 시작 시점 hp 저장
+                    player.beforeSave(); // 전투 시작 시점 hp 저장
                     DisplayBattleUI();//던전 열기
                     break;
                 case 5:
@@ -358,8 +358,6 @@ namespace TextRPG
                             Console.WriteLine("Enter 를 눌러주세요.");
                             Console.ReadLine();
                         }
-
-                        //   소지금이 부족핟
                     }
 
                     DisplayBuyUI();
