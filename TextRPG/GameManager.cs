@@ -36,7 +36,7 @@ namespace TextRPG
 
         public void SetData()   //게임 첫 시작시 생성되는 정보들
         {
-            player = new Character(5, nameCreate(), jobSelect(),50, 1500);
+            player = new Character(1, nameCreate(), jobSelect(),50, 1500);
             monsters = new Monster[4];
 
             itemDb = new Item[]
@@ -48,7 +48,7 @@ namespace TextRPG
             new Item("스파르타의 갑옷", 1, 15,"스파르타의 전사들이 사용했다는 전설의 갑옷입니다. ",3500),
             new Item("낣은 검", 0, 2,"쉽게 볼 수 있는 낡은 검 입니다. ",600),
             new Item("청동 도끼", 0, 5,"어디선가 사용됐던거 같은 도끼입니다. ",1500),
-            new Item("질풍 검", 0, 10,"야스오의 무기입니다.",10000)
+            new Item("질풍 검", 0, 20,"야스오의 무기입니다.",10000)
             };
 
 
@@ -75,12 +75,12 @@ namespace TextRPG
 
             // 1마리에서 4마리까지 랜덤 생성
             int numberOfMonsters = random.Next(1, 5);
-            Monster[] monsters = new Monster[numberOfMonsters];
+            Monster[]  monsters = new Monster[numberOfMonsters];
 
             // 랜덤으로 몬스터 선택하여 배열에 추가
             for (int i = 0; i < numberOfMonsters; i++)
             {
-                int randomIndex = random.Next(monstersDb.Length);
+                int randomIndex = random.Next(2 + stage);
                 monsters[i] = new Monster(monstersDb[randomIndex]);
             }
 
@@ -787,7 +787,7 @@ namespace TextRPG
                 }
             }
 
-            if (stage < 3) //클리어시 +1씩 증가 최대 3
+            if (stage < 4) //클리어시 +1씩 증가 최대 3
             {
                 stage++;
             }
