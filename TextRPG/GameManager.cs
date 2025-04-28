@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,8 +12,33 @@ namespace TextRPG
 {
     class GameManager
     {
+        public void SaveData(Character player) // 저장
+        {
+            string savepath = path;
+
+            string directory = Path.GetDirectoryName(path);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            string json = JsonConvert.SerializeObject(player, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(path, json);            
+        }
+
+        public Character LoadData() // 불러오기
+        {
+            string FilePath = path;
+            string json = File.ReadAllText(FilePath);
+            Character loadplayer = JsonConvert.DeserializeObject<Character>(json);
+
+            return loadplayer;
+        }
+
         //저장 경로
-        string path = AppDomain.CurrentDomain.BaseDirectory;
+        string path = "SaveData/savefile.json";
+
+        //string path = AppDomain.CurrentDomain.BaseDirectory;
 
         //게임 진행에 필요한 3가지 클래스
         private Character player;
@@ -220,12 +246,22 @@ namespace TextRPG
             Console.ResetColor();
             Console.WriteLine("▶▶   회 복   ◀◀");
 
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("6. ");
+            Console.ResetColor();
+            Console.WriteLine("▶▶   저 장   ◀◀");
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("7. ");
+            Console.ResetColor();
+            Console.WriteLine("▶▶ 불러 오기 ◀◀");
+
             //Console.WriteLine("0. 저장 후 종료");
             Console.WriteLine();
             Console.WriteLine("원하시는 행동을 입력해주세요.");
 
 
-            int command = inputCommand(1, 5);
+            int command = inputCommand(1, 7);
 
             switch (command)
             {
@@ -247,6 +283,16 @@ namespace TextRPG
                     break;
                 case 5:
                     DisplayPotionUI();  //물약
+                    break;
+
+                case 6: // 저장
+                    SaveData(player);
+                    DisplayMainUI();
+                    break;
+
+                case 7: // 불러오기
+                    player = LoadData();
+                    DisplayMainUI();
                     break;
                     //case 0:
                     //    saveData();
@@ -1290,8 +1336,6 @@ namespace TextRPG
             DisplaySkillDamageUI(target, skill);
             DisplayEnemyPhaseUI();
         }// 스킬 2
-
-
 
     }
 }
