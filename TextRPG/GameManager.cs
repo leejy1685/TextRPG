@@ -854,7 +854,7 @@ namespace TextRPG
             Console.WriteLine();
             // 퀘스트 상태에 따른 색상 표시 Yellow/Green
             DisplayQuestStatus(1, "마을을 위협하는 미니언 처치", minionQuest, minionKill >= 5);
-            DisplayQuestStatus(2, "장비를 장착해보자", false, false); 
+            DisplayQuestStatus(2, "장비를 장착해보자", equipQuest, player.IsEquipped(itemDb[5])); 
             DisplayQuestStatus(3, "더욱 더 강해지기!", false, player.Level >= 5);
 
             Console.ForegroundColor = ConsoleColor.Magenta;
