@@ -210,27 +210,37 @@ namespace TextRPG
             {
                 if (item.Type == 0)
                 {
-                    EquipList[item.Type] = new Item();
-                    ExtraAtk -= item.Value;
                     Atk -= ExtraAtk;
+                    ExtraAtk -= EquipList[item.Type].Value;
+                    EquipList[item.Type] = new Item();
                 }
                 else
                 {
+                    Def -= ExtraDef;
+                    ExtraDef -= EquipList[item.Type].Value;
                     EquipList[item.Type] = new Item();
-                    ExtraDef -= item.Value;
-                    Def += ExtraDef;
                 }
             }
             else
             {
                 if (item.Type == 0)
                 {
+                    if (EquipList[item.Type] != null)
+                    {
+                        Atk -= ExtraAtk;
+                        ExtraAtk -= EquipList[item.Type].Value;
+                    }
                     EquipList[item.Type] = item;
                     ExtraAtk += item.Value;
                     Atk += ExtraAtk;
                 }
                 else
                 {
+                    if (EquipList[item.Type] != null)
+                    {
+                        Def -= ExtraDef;
+                        ExtraDef -= EquipList[item.Type].Value;
+                    }
                     EquipList[item.Type] = item;
                     ExtraDef += item.Value;
                     Def += ExtraDef;

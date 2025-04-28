@@ -1281,17 +1281,17 @@ namespace TextRPG
 
         void AlphaStrike(int skillNum)
         {
-            player.Mp -= player.skillDb[skillNum].CostMP;
-            int target = DisplayAttackUI(true);
             int skill = skillNum - 1;
+            player.Mp -= player.skillDb[skill].CostMP;
+            int target = DisplayAttackUI(true);
             DisplaySkillDamageUI(target, skill);
             DisplayEnemyPhaseUI();
         }//스킬 1
 
         void DoubleStrike(int skillNum)
         {
-            player.Mp -= player.skillDb[skillNum].CostMP;
             int skill = skillNum - 1;
+            player.Mp -= player.skillDb[skill].CostMP;
 
             Random random = new Random();
 
