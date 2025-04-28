@@ -1281,7 +1281,7 @@ namespace TextRPG
 
         void AlphaStrike(int skillNum)
         {
-            player.Mp -= 10;
+            player.Mp -= player.skillDb[skillNum].CostMP;
             int target = DisplayAttackUI(true);
             int skill = skillNum - 1;
             DisplaySkillDamageUI(target, skill);
@@ -1290,7 +1290,7 @@ namespace TextRPG
 
         void DoubleStrike(int skillNum)
         {
-            player.Mp -= 15;
+            player.Mp -= player.skillDb[skillNum].CostMP;
             int skill = skillNum - 1;
 
             Random random = new Random();
