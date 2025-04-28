@@ -28,10 +28,13 @@ namespace TextRPG
         //장비 퀘스트
         bool equipQuest = false;
 
+        //퀘스트 무한 방지
+        bool questClear1, questClear2,  questClear3;
+
         //스테이지
         public int stage = 1; // 기본 스테이지 1로 시작
 
-        public GameManager()    {}  //생성자
+        public GameManager() { }  //생성자
 
         public void SetData()   //게임 시작 시 생성되는 정보들
         {
@@ -250,9 +253,18 @@ namespace TextRPG
                     DisplayQuestUI();//퀘스트 확인
                     break;
                 case 4:
-                    player.beforeSave();    //체력과 마나 저장
-                    createMonsters();   //몬스터 생성
-                    DisplayBattleUI();  //전투 시작
+                    if (player.isDie())
+                    {
+                        Console.WriteLine("체력이 0입니다.");
+                        Console.ReadLine();
+                        DisplayMainUI();
+                    }
+                    else
+                    {
+                        player.beforeSave();    //체력과 마나 저장
+                        createMonsters();   //몬스터 생성
+                        DisplayBattleUI();  //전투 시작
+                    }
                     break;
                 case 5:
                     DisplayPotionUI();  //물약
@@ -507,7 +519,7 @@ namespace TextRPG
             //몬스터 정보 표시되는 함수
             foreach (Monster monster in monsters)
             {
-                if(monster.isDie()) Console.ForegroundColor= ConsoleColor.DarkGray;
+                if (monster.isDie()) Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine(monster.monsterInfo());
                 if (monster.isDie()) Console.ResetColor();
             }
@@ -845,7 +857,7 @@ namespace TextRPG
             }
         }//패배 UI
 
-        void DisplayQuestUI() 
+        void DisplayQuestUI()
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -854,7 +866,7 @@ namespace TextRPG
             Console.WriteLine();
             // 퀘스트 상태에 따른 색상 표시 Yellow/Green
             DisplayQuestStatus(1, "마을을 위협하는 미니언 처치", minionQuest, minionKill >= 5);
-            DisplayQuestStatus(2, "장비를 장착해보자", equipQuest, player.IsEquipped(itemDb[5])); 
+            DisplayQuestStatus(2, "장비를 장착해보자", equipQuest, player.IsEquipped(itemDb[5]));
             DisplayQuestStatus(3, "더욱 더 강해지기!", false, player.Level >= 5);
 
             Console.ForegroundColor = ConsoleColor.Magenta;
@@ -873,13 +885,36 @@ namespace TextRPG
                     DisplayMainUI();
                     break;
                 case 1:
-                    MinionQuestUI();
+                    if(questClear1)
+                    {
+                        Console.WriteLine("이미 완료된 퀘스트 입니다.");
+                        Console.ReadLine();
+                        DisplayQuestUI();
+                    }
+                    else
+                    {
+                        MinionQuestUI();
+                    }
                     break;
                 case 2:
-                    EquipQuestUI();
+                    if (questClear2)
+                    {
+                        Console.WriteLine("이미 완료된 퀘스트 입니다.");
+                        Console.ReadLine();
+                        DisplayQuestUI();
+                    }
+                    else 
+                        EquipQuestUI();
                     break;
                 case 3:
-                    StrongQuestUI();
+                    if (questClear3)
+                    {
+                        Console.WriteLine("이미 완료된 퀘스트 입니다.");
+                        Console.ReadLine();
+                        DisplayQuestUI();
+                    }
+                    else
+                        StrongQuestUI();
                     break;
             }
         }//퀘스트 UI
@@ -981,6 +1016,7 @@ namespace TextRPG
                     case 1:
                         if (minionKill >= 5)
                         {
+                            questClear1 = true;
                             minionQuest = false;
                             minionKill = 0;
                             player.Inventory.Add(itemDb[1]);
@@ -991,7 +1027,7 @@ namespace TextRPG
                             Console.ResetColor();
                             Console.ReadLine();
                         }
-                        MinionQuestUI();
+                        DisplayQuestUI();
                         break;
 
                     case 2:
@@ -1100,6 +1136,7 @@ namespace TextRPG
                     case 1:
                         if (player.IsEquipped(itemDb[5]))
                         {
+                            questClear2 = true;
                             equipQuest = false;
                             player.Inventory.Add(itemDb[0]);
                             player.Inventory.Add(itemDb[0]);
@@ -1110,7 +1147,7 @@ namespace TextRPG
                             Console.ResetColor();
                             Console.ReadLine();
                         }
-                        EquipQuestUI();
+                        DisplayQuestUI();
                         break;
                     case 2:
                         DisplayQuestUI();
@@ -1186,12 +1223,13 @@ namespace TextRPG
                 case 1:
                     if (player.Level >= 5)
                     {
+                        questClear3 = true;
                         player.Inventory.Add(itemDb[7]); // 질풍 검 보상 지급
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("퀘스트 클리어!!");
                         Console.ResetColor();
                         Console.ReadLine();
-                        StrongQuestUI();
+                        DisplayQuestUI();
                     }
                     else
                     {
@@ -1319,6 +1357,15 @@ namespace TextRPG
             string stageData = JsonConvert.SerializeObject(stage);
             File.WriteAllText(path + "\\StageData.json", stageData);
 
+            string quest1Data = JsonConvert.SerializeObject(questClear1);
+            File.WriteAllText(path + "\\quest1Data.json", quest1Data);
+
+            string quest2Data = JsonConvert.SerializeObject(questClear2);
+            File.WriteAllText(path + "\\quest2Data.json", quest2Data);
+
+            string quest3Data = JsonConvert.SerializeObject(questClear3);
+            File.WriteAllText(path + "\\quest3Data.json", quest3Data);
+
         }//데이터 저장 메서드
 
         public void LoadData()
@@ -1337,6 +1384,18 @@ namespace TextRPG
             int stageD = JsonConvert.DeserializeObject<int>(stageData);
             stage = stageD;
 
+            string quest1Data = File.ReadAllText(path + "\\quest1Data.json");
+            bool quest1 = JsonConvert.DeserializeObject<bool>(quest1Data);
+            questClear1 = quest1;
+
+            string quest2Data = File.ReadAllText(path + "\\quest2Data.json");
+            bool quest2 = JsonConvert.DeserializeObject<bool>(quest2Data);
+            questClear2 = quest2;
+
+            string quest3Data = File.ReadAllText(path + "\\quest3Data.json");
+            bool quest3 = JsonConvert.DeserializeObject<bool>(quest3Data);
+            questClear3 = quest3;
+
             SetData();
 
         }//데이터 불러오기 메서드
@@ -1347,13 +1406,13 @@ namespace TextRPG
             stage = 4;
 
             //5레벨까지 필요한 경험치
-            for(int i = 0;i< 21; i++)
+            for (int i = 0; i < 21; i++)
             {
                 player.LevelUp(monstersDb[5]);
             }
 
             //모든 아이템 지급
-            for(int i = 0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 player.Inventory.Add(itemDb[i]);
             }
